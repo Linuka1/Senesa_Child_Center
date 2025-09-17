@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Gallery - Senesa Child Center</title>
+<link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<style>
+  :root{ --cell-font:13.5px; --cell-pad-y:10px; --cell-pad-x:10px; }
+
+  .content{padding:30px}
+  .page-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}
+  .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search{padding:10px 12px;border:1px solid #ddd;border-radius:8px;min-width:240px}
+  .select{padding:10px 12px;border:1px solid #ddd;border-radius:8px}
+  .btn-primary{background:#ff6b6b;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn-ghost{background:#fff;border:1px solid #ddd;color:#333;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:999px;background:#fff;font-weight:600}
+  .btn-outline:hover{background:#ff6b6b;color:#fff}
+
+  .table-wrap{ width:100%; overflow-x:hidden; }
+
+  /* Table (now fixed layout so col widths are respected) */
+  table.gallery{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    background:#fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    border-radius:12px;
+    overflow:hidden;
+    table-layout:fixed;          /* <<< keep columns tight */
+  }
+  table.gallery thead{ background:#f5f5f5 }
+  table.gallery th, table.gallery td{
+    padding:var(--cell-pad-y) var(--cell-pad-x);
+    border-bottom:1px solid #eee;
+    text-align:left;
+    font-size:var(--cell-font);
+    vertical-align:top;
+  }
+  table.gallery th{ white-space:nowrap; }
+  table.gallery td{ word-break:break-word; overflow-wrap:anywhere; }
+
+  .thumb{ width:70px; height:52px; border-radius:8px; object-fit:cover; border:1px solid #eee; display:block }
+
+  .badge{ padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; display:inline-block }
+  .st-active{background:#e8f5e9;color:#2e7d32}
+  .st-hidden{background:#fee2e2;color:#991b1b}
+
+  .row-actions{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; align-items:start; }
+  .btn-sm{ padding:6px 10px; border:none; border-radius:6px; cursor:pointer; font-size:12px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-edit{background:#4CAF50;color:#fff}
+  .btn-danger{background:#ef4444;color:#fff}
+  .btn-toggle{background:#22c55e;color:#fff}
+  .btn-copy{background:#64748b;color:#fff}
+
+  /* keep source on one line; don’t let it stretch the column */
+  .src-link{
+    display:inline-block;
+    max-width:100%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* Gallery Modal Styling */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  margin: auto;
+  border-radius: 8px;
+  width: 80%; /* Make modal responsive */
+  max-width: 620px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  font-weight: bold;
+}
+
+#src, #thumb, #caption, #status, #uploadImage {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+#uploadImage {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+#closeEdit {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Add "Save" and "Cancel" Button Styling */
+.btn-primary {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-ghost {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover, .btn-ghost:hover {
+  opacity: 0.8;
+}
+
+
+  .empty{ padding:30px; color:#777; text-align:center }
+
+  @media (max-width:1280px){ :root{ --cell-font:12.5px; --cell-pad-y:8px; --cell-pad-x:8px; } }
+
+  /* Mobile card layout (same pattern as Programs) */
+  @media (max-width:720px){
+    table.gallery, table.gallery thead, table.gallery tbody, table.gallery th, table.gallery td, table.gallery tr{ display:block !important; width:100% !important; }
+    table.gallery thead{ display:none !important; }
+    table.gallery tr{ background:#fff; border:1px solid #eee; border-radius:12px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,.06); overflow:hidden; }
+    table.gallery td{ border-bottom:1px solid #f1f1f1; padding:12px 14px; display:flex !important; align-items:flex-start; justify-content:space-between; gap:10px; }
+    table.gallery td:last-child{ border-bottom:none; }
+    table.gallery td::before{ content:attr(data-col); font-weight:600; color:#6b7280; flex:0 0 45%; max-width:45%; }
+    table.gallery td>*{ flex:1 1 auto; text-align:right; word-break:break-word; }
+    .row-actions{ width:100%; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2><i class="fas fa-school"></i> Senesa Child Center - Admin</h2>
+    <nav>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="students.html"><i class="fas fa-user-graduate"></i> Enrollments</a>
+      <a href="teachers.html"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+      <a href="programs.html"><i class="fas fa-book-open"></i> Programs</a>
+      <a href="gallery.html" class="active"><i class="fas fa-images"></i> Gallery</a>
+      <a href="books.html"><i class="fas fa-book"></i> Books</a>
+      <a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+      <a href="users.html"><i class="fas fa-users-cog"></i> Users</a>
+      <a href="orders.html"><i class="fas fa-receipt"></i> Orders</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1>Gallery</h1>
+      <div class="admin-info dropdown">
+        <i class="fas fa-user-circle"></i> Admin <i class="fas fa-caret-down"></i>
+        <ul class="dropdown-menu">
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="change-password.html">Change Password</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+      <div id="logoutModal" class="modal modal--confirm">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Confirm Logout</h3>
+          <p>Are you sure you want to logout?</p>
+          <div class="modal-buttons">
+            <button id="confirmLogout" class="btn-danger">Yes, Logout</button>
+            <button id="cancelLogout" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div style="margin-bottom:16px"><a href="dashboard.html" class="btn-outline"><i class="fas fa-arrow-left"></i> Back</a></div>
+
+      <div class="page-head">
+        <div>
+          <h2 style="margin:0;color:#333">Gallery Items</h2>
+          <p style="margin:4px 0 0;color:#6b7280;font-size:13px">Controls images shown in public “Gallery”.</p>
+        </div>
+        <div class="filters">
+          <input id="searchBox" class="search" placeholder="Search caption / file name" />
+          <select id="statusFilter" class="select">
+            <option value="">All</option><option>Active</option><option>Hidden</option>
+          </select>
+          <button id="addBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Photo</button>
+          <button id="importBtn" class="btn-ghost"><i class="fas fa-file-import"></i> Import JSON</button>
+          <input id="importInput" type="file" accept="application/json" style="display:none" />
+          <button id="exportCsvBtn" class="btn-ghost"><i class="fas fa-file-export"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="gallery">
+          <colgroup>
+            <col style="width:60px" />
+            <col style="width:120px" />
+            <col style="width:22%" />   
+            <col style="width:18%" />   
+            <col style="width:110px" />
+            <col style="width:150px" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Thumb</th>
+              <th>Caption</th>
+              <th>Source</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty" style="display:none;">No items found.</div>
+    </section>
+
+    <footer style="text-align:center;padding:15px;margin-top:auto;background:#fff;box-shadow:0 -2px 5px rgba(0,0,0,.1);">
+      &copy; 2025 Senesa Child Center. All rights reserved.
+    </footer>
+  </main>
+
+  <div id="editModal" class="modal">
+  <div class="modal-content" style="max-width:620px">
+    <span class="close" id="closeEdit">&times;</span>
+    <h3 id="editTitle">Add Photo</h3>
+    <form id="galForm">
+      <input type="hidden" id="galId" />
+
+      <!-- Image URL (Text Input) -->
+      <div class="form-group">
+        <label for="src">Image URL</label>
+        <input type="text" id="src" placeholder="../gallery1.jpg" required />
+      </div>
+
+      <!-- Or Upload Image (Choose File) -->
+      <div class="form-group">
+        <label for="uploadImage">Or Upload Image</label>
+        <input type="file" id="uploadImage" />
+      </div>
+
+      <!-- Thumbnail URL (Text Input) -->
+      <div class="form-group">
+        <label for="thumb">Thumb URL (optional)</label>
+        <input type="text" id="thumb" placeholder="../gallery1-thumb.jpg" />
+      </div>
+
+      <!-- Caption -->
+      <div class="form-group">
+        <label for="caption">Caption</label>
+        <input type="text" id="caption" required />
+      </div>
+
+      <!-- Status -->
+      <div class="form-group">
+        <label for="status">Status</label>
+        <select id="status">
+          <option>Active</option>
+          <option>Hidden</option>
+        </select>
+      </div>
+
+      <!-- Save and Cancel Buttons -->
+      <div class="modal-buttons">
+        <button type="submit" class="btn-primary">Save</button>
+        <button type="button" class="btn-ghost" id="cancelEdit">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// ====== Shared UI ======
+const adminInfo = document.querySelector('.admin-info');
+const dropdownMenu = adminInfo?.querySelector('.dropdown-menu');
+const logoutBtn = document.getElementById('logoutBtn');
+const logoutModal = document.getElementById('logoutModal');
+const closeLogout = logoutModal?.querySelector('.close');
+const confirmLogout = document.getElementById('confirmLogout');
+const cancelLogout = document.getElementById('cancelLogout');
+const toggleBtn = document.querySelector('.sidebar-toggle');
+const sidebar = document.querySelector('.sidebar');
+
+adminInfo?.addEventListener('click', e => { e.stopPropagation(); dropdownMenu?.classList.toggle('show'); });
+document.addEventListener('click', () => dropdownMenu?.classList.remove('show'));
+logoutBtn?.addEventListener('click', e => { e.preventDefault(); if(!logoutModal) return; logoutModal.style.display='flex'; dropdownMenu?.classList.remove('show'); document.body.classList.add('modal-open'); });
+function closeLogoutModal(){ if(!logoutModal) return; logoutModal.style.display='none'; document.body.classList.remove('modal-open'); }
+closeLogout?.addEventListener('click', closeLogoutModal);
+cancelLogout?.addEventListener('click', closeLogoutModal);
+window.addEventListener('click', e => { if(e.target===logoutModal) closeLogoutModal(); });
+document.addEventListener('keydown', e => { if(e.key==='Escape' && logoutModal?.style.display==='flex') closeLogoutModal(); });
+confirmLogout?.addEventListener('click', () => { document.body.classList.remove('modal-open'); location.href='admin-login.html'; });
+toggleBtn?.addEventListener('click', () => sidebar?.classList.toggle('active'));
+
+// ====== Gallery constants / refs ======
+const API = "../api/gallery.php";
+let data = [];
+
+const tbody = document.getElementById('tbody');
+const emptyState = document.getElementById('emptyState');
+const searchBox = document.getElementById('searchBox');
+const statusFilter = document.getElementById('statusFilter');
+
+const editModal = document.getElementById('editModal');
+const closeEdit = document.getElementById('closeEdit');
+const cancelEdit = document.getElementById('cancelEdit');
+const editTitle = document.getElementById('editTitle');
+const form = document.getElementById('galForm');
+
+const galId = document.getElementById('galId');
+const src = document.getElementById('src');
+const thumb = document.getElementById('thumb');
+const caption = document.getElementById('caption');
+const statusEl = document.getElementById('status');
+const uploadImage = document.getElementById('uploadImage'); // <- optional file input
+
+// Where uploaded images will live RELATIVE to the admin page
+// (admin/*.html -> ../uploads/gallery/)
+const UPLOAD_DEST_PREFIX = '../uploads/gallery/';
+
+function slugifyFilename(name){
+  const parts = String(name).split('.');
+  const ext = parts.length > 1 ? '.' + parts.pop().toLowerCase() : '';
+  const base = parts.join('.').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  return (base || 'image') + ext;
+}
+
+function inferDestPath(file){
+  const cleaned = slugifyFilename(file.name || 'image.jpg');
+  return UPLOAD_DEST_PREFIX + Date.now() + '-' + cleaned;
+}
+
+if (uploadImage) {
+  uploadImage.addEventListener('change', () => {
+    const f = uploadImage.files && uploadImage.files[0];
+    if (!f) return;
+    const dest = inferDestPath(f);
+    if (!src.value.trim())   src.value   = dest;
+    if (!thumb.value.trim()) thumb.value = dest;
+  });
+}
+
+// If user types an Image URL but leaves Thumb empty, mirror it
+src.addEventListener('input', () => {
+  if (!thumb.value.trim()) thumb.value = src.value.trim();
+});
+
+
+const addBtn = document.getElementById('addBtn');
+const importBtn = document.getElementById('importBtn');
+const importInput = document.getElementById('importInput');
+const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+const badge = s => `<span class="badge ${s==='Active'?'st-active':'st-hidden'}">${s}</span>`;
+
+// ====== Helpers ======
+const normalizePath = (p) => {
+  if(!p) return '';
+  if(/^https?:\/\//i.test(p) || /^data:/i.test(p) || /^\.\.\//.test(p)) return p;
+  return '../' + p.replace(/^\.?\//,'');
+};
+
+function render(rows){
+  tbody.innerHTML = '';
+  emptyState.style.display = rows.length ? 'none' : 'block';
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    const srcPath = normalizePath(r.src||'');
+    const thumbPath = normalizePath(r.thumb||r.src||'');
+    tr.innerHTML = `
+      <td data-col="ID">${r.id}</td>
+      <td data-col="Thumb"><img class="thumb" src="${thumbPath}" alt=""></td>
+      <td data-col="Caption">${r.caption||'—'}</td>
+      <td data-col="Source"><a class="src-link" href="${srcPath||'#'}" target="_blank" rel="noopener">${srcPath||'—'}</a></td>
+      <td data-col="Status">${badge(r.status)}</td>
+      <td data-col="Actions">
+        <div class="row-actions">
+          <button class="btn-sm btn-copy" data-id="${r.id}"><i class="fas fa-link"></i> Copy URL</button>
+          <button class="btn-sm btn-edit" data-id="${r.id}"><i class="fas fa-edit"></i> Edit</button>
+          <button class="btn-sm btn-toggle" data-id="${r.id}" data-act="toggle"><i class="fas fa-toggle-on"></i> ${r.status==='Active'?'Hide':'Activate'}</button>
+          <button class="btn-sm btn-danger" data-id="${r.id}" data-act="delete"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function applyFilter(){
+  const q = (searchBox?.value||'').toLowerCase();
+  const st = statusFilter?.value||'';
+  const filtered = data.filter(r=>{
+    const mQ = !q || [r.caption,r.src,r.thumb].filter(Boolean).some(v=>String(v).toLowerCase().includes(q));
+    const mS = !st || r.status===st;
+    return mQ && mS;
+  });
+  render(filtered);
+}
+
+// ====== Load from DB ======
+function loadGallery(){
+  fetch(API + '?action=list')
+    .then(r=>r.json())
+    .then(j=>{
+      if(j.ok){
+        data = Array.isArray(j.data) ? j.data : [];
+        applyFilter();
+      }else{
+        console.error('List error:', j.error);
+        data = [];
+        applyFilter();
+      }
+    })
+    .catch(err=>{
+      console.error('Fetch list failed:', err);
+      data = [];
+      applyFilter();
+    });
+}
+
+// ====== Modal open/close ======
+function openAdd(){
+  editTitle.textContent = 'Add Photo';
+  galId.value = '';
+  [src,thumb,caption].forEach(el=>el.value='');
+  statusEl.value = 'Active';
+  if(uploadImage) uploadImage.value = '';
+  editModal.style.display = 'flex';
+  document.body.classList.add('modal-open');
+}
+function openEdit(row){
+  editTitle.textContent = 'Edit Photo';
+  galId.value = row.id;
+  src.value = row.src||'';
+  thumb.value = row.thumb||'';
+  caption.value = row.caption||'';
+  statusEl.value = row.status||'Active';
+  if(uploadImage) uploadImage.value = '';
+  editModal.style.display = 'flex';
+  document.body.classList.add('modal-open');
+}
+function closeEditModal(){
+  editModal.style.display = 'none';
+  document.body.classList.remove('modal-open');
+}
+closeEdit?.addEventListener('click', closeEditModal);
+cancelEdit?.addEventListener('click', closeEditModal);
+window.addEventListener('click', e=>{ if(e.target===editModal) closeEditModal(); });
+
+// ====== Create / Update ======
+form?.addEventListener('submit', e=>{
+  e.preventDefault();
+
+  const id = galId.value.trim();
+  const srcVal = (src.value||'').trim();
+  const thumbVal = (thumb.value||'').trim();
+  const captionVal = (caption.value||'').trim();
+  const statusVal = statusEl.value;
+
+  const fileUpload = uploadImage?.files?.[0] || null;
+
+  // Require either URL or file
+  if(!srcVal && !fileUpload){
+    alert('Please provide either an Image URL or upload an image.');
+    return;
+  }
+
+  const fd = new FormData();
+  fd.append('action', id ? 'edit' : 'add');
+  if(id) fd.append('id', id);
+  fd.append('src', srcVal);
+  fd.append('thumb', thumbVal);
+  fd.append('caption', captionVal);
+  fd.append('status', statusVal);
+  if(fileUpload) fd.append('uploadImage', fileUpload); // backend must handle this if you want actual upload
+
+  fetch(API, { method:'POST', body: fd })
+    .then(r=>r.json())
+    .then(j=>{
+      if(!j.ok) console.error('Save error:', j.error);
+      loadGallery();
+      closeEditModal();
+    })
+    .catch(err=>console.error('Save failed:', err));
+});
+
+// ====== Table actions (delegate) ======
+tbody?.addEventListener('click', e=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const id = Number(btn.dataset.id);
+  const row = data.find(x=>x.id==id);
+  if(!row) return;
+
+  if(btn.classList.contains('btn-copy')){
+    const copyUrl = normalizePath(row.src||'');
+    navigator.clipboard?.writeText(copyUrl).then(()=>{
+      btn.textContent = 'Copied!';
+      setTimeout(()=>btn.innerHTML = '<i class="fas fa-link"></i> Copy URL', 900);
+    }).catch(()=>alert('Copy failed'));
+    return;
+  }
+
+  if(btn.classList.contains('btn-edit')){
+    openEdit(row);
+    return;
+  }
+
+  if(btn.dataset.act === 'toggle'){
+    const newStatus = row.status === 'Active' ? 'Hidden' : 'Active';
+    const fd = new FormData();
+    fd.append('action', 'edit');
+    fd.append('id', row.id);
+    fd.append('src', row.src||'');
+    fd.append('thumb', row.thumb||'');
+    fd.append('caption', row.caption||'');
+    fd.append('status', newStatus);
+
+    fetch(API, { method:'POST', body: fd })
+      .then(r=>r.json())
+      .then(j=>{
+        if(!j.ok){ alert('Failed to update status'); return; }
+        row.status = newStatus;
+        applyFilter();
+      })
+      .catch(err=>console.error('Toggle failed:', err));
+    return;
+  }
+
+  if(btn.dataset.act === 'delete'){
+    if(!confirm('Delete this photo?')) return;
+    const fd = new FormData();
+    fd.append('action','delete');
+    fd.append('id', row.id);
+
+    fetch(API, { method:'POST', body: fd })
+      .then(r=>r.json())
+      .then(j=>{
+        if(!j.ok){ alert('Failed to delete'); return; }
+        data = data.filter(x=>x.id != row.id);
+        applyFilter();
+      })
+      .catch(err=>console.error('Delete failed:', err));
+    return;
+  }
+});
+
+// ====== Import / Export / Add ======
+addBtn?.addEventListener('click', openAdd);
+
+importBtn?.addEventListener('click', ()=>importInput?.click());
+importInput?.addEventListener('change', ()=>{
+  const f = importInput.files?.[0];
+  if(!f) return;
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const payload = JSON.parse(r.result);
+      const items = Array.isArray(payload) ? payload : [payload];
+
+      // POST each to backend using FormData (gallery.php expects form fields)
+      Promise.all(items.map(it=>{
+        const fd = new FormData();
+        fd.append('action','add');
+        fd.append('src', it.src || it.url || '');
+        fd.append('thumb', it.thumb || it.thumbnail || '');
+        fd.append('caption', it.caption || '');
+        fd.append('status', it.status === 'Hidden' ? 'Hidden' : 'Active');
+        return fetch(API, { method:'POST', body: fd }).then(r=>r.json());
+      })).then(()=>loadGallery());
+    }catch(err){
+      alert('Invalid JSON.');
+    }
+    importInput.value = '';
+  };
+  r.readAsText(f);
+});
+
+exportCsvBtn?.addEventListener('click', ()=>{
+  const rows = [['ID','Src','Thumb','Caption','Status','Created']].concat(
+    data.map(r=>[r.id,r.src,r.thumb,r.caption,r.status,r.created_at || r.createdAt || ''])
+  );
+  const csv = rows.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'gallery.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+// ====== Init ======
+searchBox?.addEventListener('input', applyFilter);
+statusFilter?.addEventListener('change', applyFilter);
+loadGallery();
+
+
+</script>
+</body>
+</html>

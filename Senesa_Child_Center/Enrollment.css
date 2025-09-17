@@ -1,0 +1,834 @@
+:root {
+    --orange: #f9ba60;
+    --pink: #e9768f;
+    --black: #1d1c1c;
+    --white: #fff;
+    --light-color: #666;
+    --box-shadow: 0 .5rem rgba(0, 0, 0, .1);
+    --spacing-unit: 1rem;
+    --border-radius: 0.5rem;
+    --font-size-base: 1.6rem;
+    --high-contrast: #111;
+}
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--orange);
+    border-radius: 10px;
+}
+
+#cart-btn {
+    font-size: 24px; /* Set the size of the cart icon */
+    color: black; /* Set the color of the cart icon */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    transition: color 0.3s ease;
+}
+
+#cart-btn:hover {
+    color: orange; /* Change the color of the cart icon on hover */
+}
+
+
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: all .2s linear;
+    
+}
+
+html {
+    font-size: 62.5%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+section{
+    padding: 3rem 7%;
+}
+
+.heading{
+    font-size: 4rem;
+    color: var(--black);
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bolder;
+    margin-bottom: 6rem;
+}
+
+.heading span{
+    color: var(--orange);
+    text-transform: uppercase;
+
+}
+
+.btn {
+    font-size: 1.7rem;
+    margin-top: 1rem;
+    display: inline-block;
+    padding: .8rem 3rem;
+    border-radius: .5rem;
+    border: .2rem solid var(--orange);
+    color: var(--orange);
+    background: none;
+    cursor: pointer;
+    color: var(--high-contrast);
+}
+.btn:hover {
+    background: var(--orange);
+    color: var(--white);
+}
+
+/* Make the HTML hidden attribute always hide elements */
+[hidden] { display: none !important; }
+
+
+/* header */
+
+/* ===== ENROLLMENT: make header identical to Home ===== */
+.header{
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 2rem 9% !important;
+  background: #fff !important;
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.10) !important; /* same as Home */
+  border: 0 !important;
+}
+
+.page-title-header{ 
+    display:flex; 
+    align-items:center; 
+    gap:14px; 
+    margin-bottom:16px; 
+    }
+
+/* logo + icon exactly like Home */
+/* Ensure the site navbar logo (top bar) looks like Home */
+.header .logo{
+  width:auto !important;
+  height:auto !important;
+  background:none !important;
+  box-shadow:none !important;
+  color: var(--black) !important;
+  font-size: 2.5rem !important;
+  font-weight: bolder !important;
+}
+.header .logo i{ color: var(--orange) !important; }
+
+
+/* navbar links exactly like Home */
+.header .navbar a{
+  font-size: 1.7rem !important;
+  margin: 0 1rem !important;
+  color: var(--black) !important;
+  text-decoration: none !important;
+  border-bottom: 2px solid transparent !important;
+}
+.header .navbar a:hover,
+.header .navbar a.active{
+  color: var(--orange) !important;
+  border-bottom-color: var(--orange) !important;
+}
+
+/* icons on the right */
+.header .icons .fas,
+.header .icons a.fas{
+  font-size: 3rem !important;
+  color: var(--black) !important;
+}
+
+
+
+/* optional: shorten long brand on smaller screens */
+@media (max-width: 900px){
+  .logo .brand-extra{ display:none; }   /* shows just “Senesa” */
+}
+
+
+
+.header .logo:hover {
+    text-decoration: underline;  
+    color: var(--pink);
+}
+.header .logo i {
+    color: var(--orange);
+}
+
+.main-offset { margin-top: 100px; }
+
+/* Modal Styles */
+.header .login-form {
+    display: none; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 35rem;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, pointer-events 0.3s ease;
+}
+
+.header .login-overlay {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    transition: opacity 0.3s ease;
+}
+
+.header .login-form.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.header .login-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.header .login-form .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    color: var(--black);
+    cursor: pointer;
+}
+
+.header .login-form h3 {
+    font-size: 2rem;
+    color: var(--black);
+    text-align: center;
+}
+
+.header .login-form .box {
+    width: 100%;
+    margin: .7rem 0;
+    background: #eee;
+    border-radius: .5rem;
+    padding: 1rem;
+    font-size: 1.6rem;
+    color: var(--black);
+    text-transform: capitalize;
+}
+
+.header .login-form p {
+    font-size: 1.4rem;
+    padding: .5rem 0;
+    color: var(--light-color);
+}
+
+.header .login-form p a {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
+.header .login-form .btn {
+    background-color: var(--orange);
+    color: var(--white);
+    padding: 1rem 2rem;
+    font-size: 1.7rem;
+    border-radius: .5rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.header .login-form .btn:hover {
+    background-color: var(--dark-orange);
+}
+
+.header .login-form .register-section {
+    display: none;
+}
+
+.header .login-form .login-section,
+.header .login-form .register-section {
+    padding: 2rem;
+}
+
+/* make the site navbar logo look exactly like Home */
+.header .logo,
+.header .logo:link,
+.header .logo:visited{
+  color: var(--black) !important;
+  width:auto !important; height:auto !important;
+  background:none !important; box-shadow:none !important;
+  font-size: 2.5rem !important; font-weight: bolder !important;
+}
+.header .logo i{ color: var(--orange) !important; }
+
+
+/* Cart Section */
+.cart {
+    padding: 40px 20px;
+    background-color: #f4f4f9;  /* Light background color for the Cart section */
+    margin-top: 60px;
+}
+
+/* Cart Wrapper (Left and Right sides) */
+.cart-wrapper {
+    display: flex;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Left Side: Cart Items */
+.cart-items {
+    flex: 2;
+    padding: 25px;
+    border-right: 1px solid #eee;
+}
+
+.cart-items h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #ff4da6; /* Pink title */
+}
+
+.empty-msg {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin-top: 50px;
+}
+
+/* Right Side: Summary */
+.cart-summary {
+    flex: 1;
+    padding: 25px;
+    background: linear-gradient(to bottom, #ffffff, #ffe4ec, #ffffff); /* White → Pink → White */
+    border-left: 1px solid #eee;
+}
+
+.cart-summary h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ff4da6; /* Pink */
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.summary-label {
+    color: #666;
+}
+
+/* Style for the dropdown (Delivery Options) */
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    font-size: 16px; 
+    box-sizing: border-box; 
+}
+
+/* Checkout Button */
+.btn-checkout {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: #ff4da6; /* Pink button */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.btn-checkout:hover {
+    background-color: #e03d8c; /* Darker pink hover */
+}
+
+/* Back Link Styling */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #ff4da6; /* Pink link */
+    font-weight: bold;
+}
+
+
+
+
+
+
+    :root{
+      --bg:#f9fafb;
+      --ink:#111827;
+      --muted:#6b7280;
+      --brand:#7c3aed; /* violet */
+      --brand-2:#22c55e; /* green */
+      --card:#ffffff;
+      --error:#ef4444;
+      --ok:#16a34a;
+      --ring:rgba(124, 58, 237, .25);
+    }
+
+    .visually-hidden{
+      position:absolute!important;
+      width:1px!important;
+      height:1px!important;
+      padding:0!important;
+      margin:-1px!important;
+      overflow:hidden!important;
+      clip:rect(0,0,0,0)!important;
+      white-space:nowrap!important;
+      border:0!important;
+    }
+
+    .main-offset { margin-top: 100px; } /* adjust if header is taller */
+
+    .main-offset h1 {
+    font-size: 2.5em;
+    font-weight: 600;
+    text-align: center;
+    margin-top: 30px;
+    color: var(--orange);
+
+    }
+
+    .main-offset h1 span {
+    color: var(--pink); 
+    }
+
+    .page-subtitle {
+    font-size: 1.8rem; 
+    font-weight: 400; 
+    color: var(--light-color); 
+    text-align: center; 
+    margin-top: 10px; 
+    margin-bottom: 30px; 
+    line-height: 1.5; 
+    font-family: 'Poppins', sans-serif; 
+    }
+
+
+
+
+
+    .wrap{
+        max-width:960px;
+        margin:24px auto;
+        padding:0 16px
+    }
+
+    .stepper{ 
+        margin-top:8px;
+        margin:12px 0 24px; 
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+        margin:0;
+        font-size:16px;     
+        line-height:1.5;     
+        color:var(--ink);
+        background: linear-gradient(180deg,#fdf2f8 0%, #eef2ff 40%, #f0fdf4 100%);
+    }
+
+    .wrap{
+        max-width:960px;
+        margin:32px auto;
+        padding:0 16px;
+    }
+    header{
+      display:flex;align-items:center;gap:14px;margin-bottom:16px
+    }
+    .logo{width:40px;height:40px;border-radius:10px;background:conic-gradient(from 180deg at 50% 50%,#f59e0b, #ef4444, #8b5cf6, #22c55e, #f59e0b);box-shadow:0 8px 24px rgba(0,0,0,.15)}
+    h1{font-size:clamp(20px,3vw,28px);margin:0}
+    .subtitle{color:var(--muted);margin-top:-2px}
+
+    .card{
+        background:#fff;
+        border-radius:18px;
+        box-shadow:0 10px 30px rgba(17,24,39,.08);
+        padding:20px
+    }
+    .stepper{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:12px 0 24px}
+    .step{position:relative;padding:12px;border-radius:12px;border:2px dashed rgba(124,58,237,.25);background:#fff}
+    .step.active{border-style:solid;border-color:var(--brand);background:linear-gradient(180deg,#ffffff, #faf5ff)}
+    .step .num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--brand);color:#fff;font-weight:700;margin-right:8px}
+    .step small{color:var(--muted)}
+
+    form{margin:0}
+    fieldset{border:0;padding:0;margin:0}
+    .grid{display:grid; grid-template-columns:repeat(12,1fr); gap:14px;}
+    .col-6{grid-column:span 6}
+    .col-4{grid-column:span 4}
+    .col-8{grid-column:span 8}
+    .col-12{grid-column:span 12}
+
+    /* Disabled Daycare Plan Buttons */
+input[type="radio"]:disabled {
+    opacity: 0.5;  /* Make disabled options look lighter */
+    cursor: not-allowed;  /* Change cursor to indicate it's not selectable */
+}
+
+/* Style the "Nursery Plan" Buttons */
+input[type="radio"][name="nursery-plan"] {
+    margin-right: 10px;  /* Space between radio buttons */
+}
+
+/* show the message when the wrapper is flagged */
+.col-12.show-error .error { display: block; }
+
+/* optional: red outline on the consent cards */
+.col-12.show-error label.cardy {
+  border-color: var(--error);
+  box-shadow: 0 0 0 4px rgba(239,68,68,.12);
+}
+
+
+.cardy {
+    padding: 1rem;
+    background: #fff;
+    margin: 10px 0;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cardy input[type="radio"] {
+    margin-right: 10px;  /* Space between radio button and label */
+}
+
+/* Style for error message */
+.error {
+    color: red;
+    font-size: 1.4rem;
+    margin-top: 1rem;
+}
+
+/* Style for "Nursery and Daycare" button */
+#nursery-and-daycare-btn {
+    background-color: #ff6347;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+#nursery-and-daycare-btn:hover {
+    background-color: #e53e3e;  /* Darken button color on hover */
+}
+
+
+
+
+
+    label{display:block;font-weight:600;margin-bottom:6px}
+    .req::after{content:" *";color:var(--error)}
+    input,select,textarea{width:100%;padding:12px 12px;border-radius:12px;border:1.5px solid #e5e7eb;background:#fff;outline:none;transition:.15s}
+    textarea{min-height:96px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:var(--brand);box-shadow:0 0 0 6px var(--ring)}
+
+    .cardy{border:2px solid #e5e7eb;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;background:#fff}
+    .cardy input{width:auto}
+    .cardy:hover{border-color:var(--brand)}
+
+    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .spacer{height:8px}
+
+    .actions{display:flex;justify-content:space-between;margin-top:18px}
+    .btn{appearance:none;background:var(--brand);color:#fff;border:0;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer;box-shadow:0 10px 20px rgba(124,58,237,.25);transition:.15s}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .btn.secondary{background:#111827;color:#fff}
+    .btn.ghost{background:#fff;color:#111827;border:2px solid #e5e7eb}
+
+    .error{color:var(--error);font-size:13px;margin-top:6px;display:none}
+    .show-error .error{display:block}
+
+    .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.25);opacity:0;transform:translateY(10px);transition:.2s}
+    .toast.show{opacity:1;transform:translateY(0)}
+
+    .review{
+      background:linear-gradient(180deg,#f8fafc,#ffffff);border:1px solid #e5e7eb;border-radius:16px;padding:16px
+    }
+    .review h3{margin:8px 0}
+    .review .kv{display:grid;grid-template-columns:200px 1fr;gap:8px;padding:6px 0;border-bottom:1px dashed #e5e7eb}
+
+    .note{font-size:13px;color:var(--muted)}
+
+    #backHome {
+      text-decoration: none; 
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 24px;
+      font-size: 14px;
+      height: 44px;
+      background-color: black; 
+      color: white;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+/* footer*/
+
+.footer {
+    background-color: var(--pink);
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--white);
+}
+
+.footer .box-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 3rem;
+}
+
+.footer .box {
+    flex: 1 1 20rem; 
+    margin: 1rem;
+    padding: 1.5rem;
+    background-color: var(--white);
+    color: var(--black);
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer .box h3 {
+    font-size: 2rem;
+    color: var(--orange);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.footer .box p {
+    font-size: 1.4rem;
+    color: var(--light-color);
+    word-wrap: break-word; 
+    line-height: 1.8;
+    white-space: normal;  
+}
+
+
+
+.footer .box a {
+    display: block;
+    color: var(--black);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    text-decoration: none;
+}
+
+.footer .box a:hover {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
+.footer .box-container .box a i{
+    padding-right: .5rem;
+    color: var(--orange);
+}
+
+.footer .credit {
+    padding: 2rem;
+    font-size: 1.4rem;
+    background-color: var(--white);
+    color: var(--black);
+    text-align: center;
+}
+.footer .credit span{
+    color: var(--orange);
+}
+
+
+/*end*/
+
+body {
+    font-size: 1.4rem;
+}
+
+/*media query */
+@media (max-width: 900px){
+  .col-6,.col-12{ grid-column:1 / -1; } /* single column on small screens */
+}
+ @media (max-width:991px){
+    html{
+        font-size: 55%;
+    }
+
+    .header{
+        padding: 2rem 3rem;
+    }
+
+    section{
+      padding: 3rem;  
+    }
+ }
+/* ===== Mobile navbar (≤768px) — off-canvas, closed by default ===== */
+@media (max-width: 768px){
+  #menu-btn{ display:inline-block !important; }
+
+  .header{ padding: 1rem 12px !important; z-index: 2000 !important; }
+  .header .icons{ position:relative; z-index:3000 !important; }
+
+  /* CLOSED state by default */
+  .header .navbar{
+    position: absolute !important;
+    top: 110% !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+
+    background: #fff !important;
+    border-radius: 1rem !important;
+    box-shadow: var(--box-shadow) !important;
+    padding: 1.2rem 0 !important;
+
+    transform: translateX(120%) !important;   /* off screen */
+    transition: transform .35s ease !important;
+    z-index: 1500 !important;
+  }
+
+  /* OPEN when JS toggles .active */
+  .header .navbar.active{ transform: translateX(0) !important; }
+
+  .header .navbar a{
+    display: block !important;
+    margin: 1.4rem 1.8rem !important;
+    font-size: 2rem !important;
+    border-bottom: 2px solid transparent !important;
+  }
+}
+
+/* Desktop: hide menu button */
+@media (min-width: 769px){
+  #menu-btn{ display:none !important; }
+}
+
+/* Phones: stepper wraps to rows */
+@media (max-width: 480px){
+  .stepper{
+    grid-template-columns: repeat(2, minmax(140px, 1fr));  /* 2 per row */
+    gap: 12px;
+  }
+  .step{ min-height: 120px; } /* room for labels */
+}
+
+/* Very small phones */
+@media (max-width: 360px){
+  .stepper{ grid-template-columns: 1fr; }  /* 1 per row */
+}
+
+/* ===== Review step: responsive key/value layout ===== */
+.review{ width:100%; max-width:100%; overflow-x:hidden; }
+
+.review .kv{
+  display:grid;
+  grid-template-columns: minmax(160px, 1fr) 2fr; /* nicer on tablet/desktop */
+  gap: 8px 12px;
+  align-items:start;
+  padding: 6px 0;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+/* Wrap long emails/notes cleanly */
+.review .kv > div{
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Phones: stack labels above values for perfect alignment */
+@media (max-width: 480px){
+  .review .kv{
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .review .kv > div:first-child{
+    font-weight: 600;
+    color: #111827;
+  }
+}
+
+/* Small tablets: a slightly smaller label column */
+@media (min-width: 481px) and (max-width: 768px){
+  .review .kv{ grid-template-columns: minmax(140px, 1fr) 2fr; }
+}
+
+/* Compact mobile menu (≤480px) */
+@media (max-width: 480px){
+  .header{ padding: 12px !important; }
+
+  /* Keep menu small and scrollable instead of covering the page */
+  .header .navbar{
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+
+    max-height: min(70vh, calc(100dvh - 72px)); /* never taller than screen */
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+
+    padding: 4px 0 !important;
+    border: 1px solid #eee !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.12) !important;
+  }
+
+  /* Tighter link spacing */
+  .header .navbar a{
+    display: block !important;
+    margin: 0 !important;
+    padding: 12px 14px !important;
+    font-size: 1.8rem !important;
+    border-bottom: 1px solid #f2f2f2 !important;
+  }
+  .header .navbar a:last-child{ border-bottom: 0 !important; }
+}
+
+/* When menu is open, prevent the page behind from scrolling (nice UX) */
+body.nav-open{ overflow: hidden; }
+
+

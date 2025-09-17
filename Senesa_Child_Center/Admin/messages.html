@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Messages - Senesa Child Center</title>
+<link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<style>
+  :root{ --cell-font:13.5px; --cell-pad-y:10px; --cell-pad-x:10px; }
+  .content{padding:30px}
+  .page-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}
+  .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search{padding:10px 12px;border:1px solid #ddd;border-radius:8px;min-width:240px}
+  .select{padding:10px 12px;border:1px solid #ddd;border-radius:8px}
+  .btn-primary{background:#ff6b6b;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn-ghost{background:#fff;border:1px solid #ddd;color:#333;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:999px;background:#fff;font-weight:600}
+  .btn-outline:hover{background:#ff6b6b;color:#fff}
+
+  .table-wrap{ width:100%; overflow-x:hidden; }
+  table.msg{ width:100%; border-collapse:separate; border-spacing:0; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.08); border-radius:12px; overflow:hidden }
+  table.msg thead{ background:#f5f5f5 }
+  table.msg th, table.msg td{ padding:var(--cell-pad-y) var(--cell-pad-x); border-bottom:1px solid #eee; text-align:left; font-size:var(--cell-font) }
+  .badge{ padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; display:inline-block }
+  .st-unread{background:#e0ecff;color:#1e40af}
+  .st-read{background:#e8f5e9;color:#2e7d32}
+  .row-actions{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px }
+  .btn-sm{ padding:6px 10px; border:none; border-radius:6px; cursor:pointer; font-size:12px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-view{background:#64748b;color:#fff}
+  .btn-toggle{background:#22c55e;color:#fff}
+  .btn-danger{background:#ef4444;color:#fff}
+  .empty{padding:30px;color:#777;text-align:center}
+
+  @media (max-width:720px){
+    table.msg, table.msg thead, table.msg tbody, table.msg th, table.msg td, table.msg tr{ display:block !important; width:100% !important }
+    table.msg thead{ display:none !important }
+    table.msg tr{ background:#fff; border:1px solid #eee; border-radius:12px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,.06); overflow:hidden }
+    table.msg td{ border-bottom:1px solid #f1f1f1; padding:12px 14px; display:flex !important; align-items:flex-start; justify-content:space-between; gap:10px }
+    table.msg td:last-child{ border-bottom:none }
+    table.msg td::before{ content:attr(data-col); font-weight:600; color:#6b7280; flex:0 0 45%; max-width:45% }
+    table.msg td>*{ flex:1 1 auto; text-align:right; word-break:break-word }
+  }
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2><i class="fas fa-school"></i> Senesa Child Center - Admin</h2>
+    <nav>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="students.html"><i class="fas fa-user-graduate"></i> Enrollments</a>
+      <a href="teachers.html"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+      <a href="programs.html"><i class="fas fa-book-open"></i> Programs</a>
+      <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
+      <a href="books.html"><i class="fas fa-book"></i> Books</a>
+      <a href="messages.html" class="active"><i class="fas fa-envelope"></i> Messages</a>
+      <a href="users.html"><i class="fas fa-users-cog"></i> Users</a>
+      <a href="orders.html"><i class="fas fa-receipt"></i> Orders</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1>Messages</h1>
+      <div class="admin-info dropdown">
+        <i class="fas fa-user-circle"></i> Admin <i class="fas fa-caret-down"></i>
+        <ul class="dropdown-menu">
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="change-password.html">Change Password</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+      <div id="logoutModal" class="modal modal--confirm">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Confirm Logout</h3>
+          <p>Are you sure you want to logout?</p>
+          <div class="modal-buttons">
+            <button id="confirmLogout" class="btn-danger">Yes, Logout</button>
+            <button id="cancelLogout" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div style="margin-bottom:16px"><a href="dashboard.html" class="btn-outline"><i class="fas fa-arrow-left"></i> Back</a></div>
+      <div class="page-head">
+        <div>
+          <h2 style="margin:0;color:#333">Inbox</h2>
+          <p style="margin:4px 0 0;color:#6b7280;font-size:13px">Messages from public “Contact Us”.</p>
+        </div>
+        <div class="filters">
+          <input id="searchBox" class="search" placeholder="Search name / email / subject" />
+          <select id="statusFilter" class="select"><option value="">All</option><option>Unread</option><option>Read</option></select>
+          <button id="importBtn" class="btn-ghost"><i class="fas fa-file-import"></i> Import JSON</button>
+          <input id="importInput" type="file" accept="application/json" style="display:none" />
+          <button id="exportCsvBtn" class="btn-ghost"><i class="fas fa-file-export"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="msg">
+          <thead><tr><th style="width:56px">ID</th><th>From</th><th>Subject</th><th style="width:140px">Received</th><th style="width:100px">Status</th><th style="width:220px">Actions</th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty" style="display:none;">No messages found.</div>
+    </section>
+
+    <footer style="text-align:center;padding:15px;margin-top:auto;background:#fff;box-shadow:0 -2px 5px rgba(0,0,0,.1);">
+      &copy; 2025 Senesa Child Center. All rights reserved.
+    </footer>
+  </main>
+
+  <!-- View Modal -->
+  <div id="viewModal" class="modal">
+    <div class="modal-content" style="max-width:640px">
+      <span class="close" id="closeView">&times;</span>
+      <h3>Message</h3>
+      <div id="viewBody" style="margin-top:10px;text-align:left;color:#444"></div>
+      <div class="modal-buttons"><button class="btn-ghost" id="closeView2">Close</button></div>
+    </div>
+  </div>
+
+<script>
+/* shared UI */
+const adminInfo=document.querySelector('.admin-info'); const dropdownMenu=adminInfo?.querySelector('.dropdown-menu');
+const logoutBtn=document.getElementById('logoutBtn'); const logoutModal=document.getElementById('logoutModal');
+const closeLogout=logoutModal?.querySelector('.close'); const confirmLogout=document.getElementById('confirmLogout');
+const cancelLogout=document.getElementById('cancelLogout'); const toggleBtn=document.querySelector('.sidebar-toggle');
+const sidebar=document.querySelector('.sidebar');
+adminInfo?.addEventListener('click',e=>{e.stopPropagation();dropdownMenu?.classList.toggle('show')});
+document.addEventListener('click',()=>dropdownMenu?.classList.remove('show'));
+logoutBtn?.addEventListener('click',e=>{e.preventDefault(); if(!logoutModal)return; logoutModal.style.display='flex'; dropdownMenu?.classList.remove('show'); document.body.classList.add('modal-open')});
+function closeLogoutModal(){ if(!logoutModal)return; logoutModal.style.display='none'; document.body.classList.remove('modal-open') }
+closeLogout?.addEventListener('click',closeLogoutModal); cancelLogout?.addEventListener('click',closeLogoutModal);
+window.addEventListener('click',e=>{ if(e.target===logoutModal) closeLogoutModal() }); document.addEventListener('keydown',e=>{ if(e.key==='Escape'&&logoutModal?.style.display==='flex') closeLogoutModal() });
+confirmLogout?.addEventListener('click',()=>{ document.body.classList.remove('modal-open'); location.href='admin-login.html' });
+toggleBtn?.addEventListener('click',()=> sidebar?.classList.toggle('active'));
+
+/* Messages logic */
+const STORAGE_KEY='senesa_messages_v1';
+const seed=[
+  {id:1,name:'Parent One',email:'p1@mail.com',phone:'+94 71 111 2222',subject:'School hours',message:'What are the hours on Fridays?',receivedAt:'2025-09-05 09:20',status:'Unread'},
+  {id:2,name:'Parent Two',email:'p2@mail.com',phone:'',subject:'Enrollment',message:'How to enroll my child?',receivedAt:'2025-09-05 10:05',status:'Read'}
+];
+const load=()=>JSON.parse(localStorage.getItem(STORAGE_KEY)||'null')||seed.slice();
+const save=arr=>localStorage.setItem(STORAGE_KEY,JSON.stringify(arr));
+let data=load();
+
+const tbody=document.getElementById('tbody'); const emptyState=document.getElementById('emptyState');
+const searchBox=document.getElementById('searchBox'); const statusFilter=document.getElementById('statusFilter');
+const badge=s=>`<span class="badge ${s==='Unread'?'st-unread':'st-read'}">${s}</span>`;
+
+function render(){
+  const q=(searchBox.value||'').toLowerCase(); const st=statusFilter.value;
+  tbody.innerHTML='';
+  const filtered=data.filter(r=>{
+    const mQ=!q||[r.name,r.email,r.subject].filter(Boolean).some(v=>String(v).toLowerCase().includes(q));
+    const mS=!st||r.status===st; return mQ&&mS;
+  });
+  if(!filtered.length){ emptyState.style.display='block'; return } else emptyState.style.display='none';
+  filtered.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td data-col="ID">${r.id}</td>
+      <td data-col="From"><div><strong>${r.name||'—'}</strong><div style="color:#6b7280">${r.email||''}${r.phone? ' • '+r.phone:''}</div></div></td>
+      <td data-col="Subject">${r.subject||'—'}</td>
+      <td data-col="Received">${r.receivedAt||'—'}</td>
+      <td data-col="Status">${badge(r.status)}</td>
+      <td data-col="Actions">
+        <div class="row-actions">
+          <button class="btn-sm btn-view" data-id="${r.id}"><i class="fas fa-eye"></i> View</button>
+          <button class="btn-sm btn-toggle" data-id="${r.id}" data-act="toggle"><i class="fas fa-envelope-open"></i> Mark ${r.status==='Unread'?'Read':'Unread'}</button>
+          <button class="btn-sm btn-danger" data-id="${r.id}" data-act="delete"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+render(); searchBox.addEventListener('input',render); statusFilter.addEventListener('change',render);
+
+/* view */
+const viewModal=document.getElementById('viewModal'); const viewBody=document.getElementById('viewBody');
+const closeView=document.getElementById('closeView'); const closeView2=document.getElementById('closeView2');
+[closeView,closeView2].forEach(el=>el.addEventListener('click',()=>viewModal.style.display='none'));
+window.addEventListener('click',e=>{ if(e.target===viewModal) viewModal.style.display='none' });
+
+tbody.addEventListener('click',e=>{
+  const btn=e.target.closest('button'); if(!btn) return;
+  const id=Number(btn.dataset.id); const row=data.find(x=>x.id===id); if(!row)return;
+  if(btn.classList.contains('btn-view')){
+    viewBody.innerHTML=`
+      <p><strong>From:</strong> ${row.name||'—'} &lt;${row.email||'—'}&gt; ${row.phone? ' • '+row.phone:''}</p>
+      <p><strong>Subject:</strong> ${row.subject||'—'}</p>
+      <p style="white-space:pre-wrap"><strong>Message:</strong>\n${row.message||'—'}</p>
+      <p style="color:#6b7280"><strong>Received:</strong> ${row.receivedAt||'—'}</p>`;
+    viewModal.style.display='flex';
+  } else if(btn.dataset.act==='toggle'){ row.status=row.status==='Unread'?'Read':'Unread'; save(data); render();
+  } else if(btn.dataset.act==='delete'){ if(confirm('Delete this message?')){ const i=data.findIndex(x=>x.id===id); if(i>-1){ data.splice(i,1); save(data); render(); } } }
+});
+
+/* import/export */
+const importBtn=document.getElementById('importBtn'); const importInput=document.getElementById('importInput');
+importBtn.addEventListener('click',()=>importInput.click());
+importInput.addEventListener('change',()=>{
+  const f=importInput.files[0]; if(!f)return; const r=new FileReader();
+  r.onload=()=>{ try{ const t=JSON.parse(r.result); const next=data.length?Math.max(...data.map(x=>x.id))+1:1;
+    data.push({id:next,name:t.name||'',email:t.email||'',phone:t.phone||'',subject:t.subject||'',message:t.message||'',receivedAt:(t.receivedAt||new Date().toISOString().slice(0,16).replace('T',' ')),status:t.status==='Read'?'Read':'Unread'});
+    save(data); render(); alert('Message imported.');
+  }catch(e){alert('Invalid JSON.')} importInput.value=''; };
+  r.readAsText(f);
+});
+document.getElementById('exportCsvBtn').addEventListener('click',()=>{
+  const rows=[['ID','Name','Email','Phone','Subject','Message','Received','Status']].concat(
+    data.map(r=>[r.id,r.name,r.email,r.phone,r.subject,r.message,r.receivedAt,r.status])
+  );
+  const csv=rows.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='messages.csv'; a.click(); URL.revokeObjectURL(a.href);
+});
+</script>
+</body>
+</html>

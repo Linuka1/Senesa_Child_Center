@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Programs - Senesa Child Center</title>
+<link rel="stylesheet" href="dashboard.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+<style>
+  :root{ --cell-font:13.5px; --cell-pad-y:10px; --cell-pad-x:10px; }
+  .content{padding:30px}
+  .page-head{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}
+  .filters{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .search{padding:10px 12px;border:1px solid #ddd;border-radius:8px;min-width:240px}
+  .select{padding:10px 12px;border:1px solid #ddd;border-radius:8px}
+  .btn-primary{background:#ff6b6b;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn-ghost{background:#fff;border:1px solid #ddd;color:#333;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border:1px solid #ff6b6b;color:#ff6b6b;border-radius:999px;background:#fff;font-weight:600}
+  .btn-outline:hover{background:#ff6b6b;color:#fff}
+
+  .table-wrap{ width:100%; overflow-x:hidden; }
+  table.programs{ width:100%; border-collapse:separate; border-spacing:0; background:#fff; box-shadow:0 2px 6px rgba(0,0,0,.08); border-radius:12px; overflow:hidden }
+  table.programs thead{ background:#f5f5f5 }
+  table.programs th, table.programs td{
+    padding:var(--cell-pad-y) var(--cell-pad-x); border-bottom:1px solid #eee; text-align:left; font-size:var(--cell-font); vertical-align:top;
+  }
+  table.programs th{ white-space:nowrap; }
+  .avatar{ width:44px; height:44px; border-radius:8px; object-fit:cover; border:1px solid #eee }
+  .badge{ padding:6px 10px; border-radius:999px; font-size:12px; font-weight:600; display:inline-block }
+  .st-active{background:#e8f5e9;color:#2e7d32}
+  .st-inactive{background:#fee2e2;color:#991b1b}
+  .row-actions{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; }
+  .btn-sm{ padding:6px 10px; border:none; border-radius:6px; cursor:pointer; font-size:12px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+  .btn-view{background:#64748b;color:#fff}
+  .btn-edit{background:#4CAF50;color:#fff}
+  .btn-danger{background:#ef4444;color:#fff}
+  .btn-toggle{background:#22c55e;color:#fff}
+  .empty{ padding:30px; color:#777; text-align:center }
+
+  @media (max-width:1280px){ :root{ --cell-font:12.5px; --cell-pad-y:8px; --cell-pad-x:8px; } }
+  @media (max-width:720px){
+    table.programs, table.programs thead, table.programs tbody, table.programs th, table.programs td, table.programs tr{ display:block !important; width:100% !important; }
+    table.programs thead{ display:none !important; }
+    table.programs tr{ background:#fff; border:1px solid #eee; border-radius:12px; margin-bottom:12px; box-shadow:0 2px 6px rgba(0,0,0,.06); overflow:hidden; }
+    table.programs td{ border-bottom:1px solid #f1f1f1; padding:12px 14px; display:flex !important; align-items:flex-start; justify-content:space-between; gap:10px; }
+    table.programs td:last-child{ border-bottom:none; }
+    table.programs td::before{ content:attr(data-col); font-weight:600; color:#6b7280; flex:0 0 45%; max-width:45%; }
+    table.programs td>*{ flex:1 1 auto; text-align:right; word-break:break-word; }
+    .row-actions{ width:100%; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  .toast{position:fixed;right:14px;bottom:14px;background:#111;color:#fff;padding:10px 12px;border-radius:8px;opacity:.95;z-index:9999;pointer-events:none}
+  .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);align-items:center;justify-content:center;z-index:1000}
+  .modal-content{background:#fff;border-radius:12px;padding:20px 22px;max-width:720px;width:100%}
+  .modal--confirm .modal-content{max-width:420px}
+  .close{cursor:pointer;float:right;font-size:24px}
+  .form-group{margin:10px 0}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .form-group input,.form-group select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px}
+  .modal-buttons{display:flex;gap:10px;justify-content:flex-end;margin-top:10px}
+  body.modal-open{overflow:hidden}
+</style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2><i class="fas fa-school"></i> Senesa Child Center - Admin</h2>
+    <nav>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="students.html"><i class="fas fa-user-graduate"></i> Enrollments</a>
+      <a href="teachers.html"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+      <a href="programs.html" class="active"><i class="fas fa-book-open"></i> Programs</a>
+      <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
+      <a href="books.html"><i class="fas fa-book"></i> Books</a>
+      <a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+      <a href="users.html"><i class="fas fa-users-cog"></i> Users</a>
+      <a href="orders.html"><i class="fas fa-receipt"></i> Orders</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1>Programs</h1>
+      <div class="admin-info dropdown">
+        <i class="fas fa-user-circle"></i> Admin <i class="fas fa-caret-down"></i>
+        <ul class="dropdown-menu">
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="change-password.html">Change Password</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+      <div id="logoutModal" class="modal modal--confirm">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Confirm Logout</h3>
+          <p>Are you sure you want to logout?</p>
+          <div class="modal-buttons">
+            <button id="confirmLogout" class="btn-danger">Yes, Logout</button>
+            <button id="cancelLogout" class="btn-ghost">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="content">
+      <div style="margin-bottom:16px">
+        <a href="dashboard.html" class="btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h2 style="margin:0;color:#333">Education Programs</h2>
+          <p style="margin:4px 0 0;color:#6b7280;font-size:13px">Manage tiles shown in “Our Education” on the public site.</p>
+        </div>
+        <div class="filters">
+          <input id="searchBox" class="search" placeholder="Search name / age / summary" />
+          <select id="statusFilter" class="select">
+            <option value="">All Statuses</option><option>Active</option><option>Inactive</option>
+          </select>
+          <button id="addBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Program</button>
+          <button id="exportCsvBtn" class="btn-ghost"><i class="fas fa-file-export"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="programs">
+          <thead>
+            <tr>
+              <th style="width:48px">ID</th>
+              <th style="width:64px">Image</th>
+              <th>Name</th>
+              <th style="width:120px">Age</th>
+              <th>Summary</th>
+              <th style="width:100px">Status</th>
+              <th style="width:220px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty" style="display:none;">No programs found.</div>
+    </section>
+
+    <footer style="text-align:center;padding:15px;margin-top:auto;background:#fff;box-shadow:0 -2px 5px rgba(0,0,0,.1);">
+      &copy; 2025 Senesa Child Center. All rights reserved.
+    </footer>
+  </main>
+
+  <!-- View Modal -->
+  <div id="viewModal" class="modal">
+    <div class="modal-content" style="max-width:560px">
+      <span class="close" id="closeView">&times;</span>
+      <h3>Program</h3>
+      <div id="viewBody" style="margin-top:10px;text-align:left;color:#444"></div>
+      <div class="modal-buttons"><button class="btn-ghost" id="closeView2">Close</button></div>
+    </div>
+  </div>
+  <!-- Add/Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content" style="max-width:620px">
+      <span class="close" id="closeEdit">&times;</span>
+      <h3 id="editTitle">Add Program</h3>
+      <form id="programForm">
+        <input type="hidden" id="programId" />
+        <div class="form-group">
+          <label for="image">Image URL</label>
+          <input id="image" placeholder="../music.png" />
+        </div>
+        <div class="form-group">
+          <label for="imageFile">Or upload image</label>
+          <input id="imageFile" type="file" accept="image/*" />
+        </div>
+        <div class="split">
+          <div class="form-group">
+            <label for="name">Program Name</label>
+            <input id="name" required />
+          </div>
+          <div class="form-group">
+            <label for="age">Age Group</label>
+            <input id="age" placeholder="3–5 yrs" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status"><option>Active</option><option>Hidden</option></select>
+        </div>
+        <div class="form-group">
+          <label for="summary">Short Summary</label>
+          <input id="summary" placeholder="One line shown on public card" />
+        </div>
+        <div class="modal-buttons">
+          <button class="btn-primary" type="submit">Save</button>
+          <button class="btn-ghost" type="button" id="cancelEdit">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+/* ---------- toast ---------- */
+const toast = (msg) => { const t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2100); };
+
+/* ---------- API ---------- */
+const API = '../api/programs.php';
+let data = [];
+
+const urlFor = (p) => { if(!p) return ''; if(/^https?:\/\//i.test(p)) return p; return '../' + String(p).replace(/^\/+/, ''); };
+
+async function apiList(){ const r=await fetch(API+'?action=list',{cache:'no-store'}); const j=await r.json(); if(!j.ok) throw new Error(j.error||'Load failed'); return j.data||[]; }
+async function apiCreate(payload,file){ const f=new FormData(); Object.entries(payload).forEach(([k,v])=>f.append(k,v??'')); if(file) f.append('file',file); f.append('action','create'); return (await fetch(API,{method:'POST',body:f})).json(); }
+async function apiUpdate(id,payload,file){ const f=new FormData(); Object.entries(payload).forEach(([k,v])=>f.append(k,v??'')); if(file) f.append('file',file); f.append('action','update'); f.append('id',id); return (await fetch(API,{method:'POST',body:f})).json(); }
+async function apiToggle(id){ const f=new FormData(); f.append('action','toggle'); f.append('id',id); return (await fetch(API,{method:'POST',body:f})).json(); }
+async function apiDelete(id){ const f=new FormData(); f.append('action','delete'); f.append('id',id); return (await fetch(API,{method:'POST',body:f})).json(); }
+
+/* ---------- DOM ready ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  /* topbar misc */
+  const adminInfo=document.querySelector('.admin-info'); const dropdown=adminInfo?.querySelector('.dropdown-menu');
+  const logoutBtn=document.getElementById('logoutBtn'); const logoutModal=document.getElementById('logoutModal');
+  const closeLogout=logoutModal?.querySelector('.close'); const confirmLogout=document.getElementById('confirmLogout'); const cancelLogout=document.getElementById('cancelLogout');
+  const toggleBtn=document.querySelector('.sidebar-toggle'); const sidebar=document.querySelector('.sidebar');
+
+  adminInfo?.addEventListener('click',e=>{e.stopPropagation();dropdown?.classList.toggle('show')});
+  document.addEventListener('click',()=>dropdown?.classList.remove('show'));
+  logoutBtn?.addEventListener('click',e=>{e.preventDefault();if(!logoutModal)return;logoutModal.style.display='flex';dropdown?.classList.remove('show');document.body.classList.add('modal-open')});
+  function closeLogoutModal(){ if(!logoutModal)return; logoutModal.style.display='none'; document.body.classList.remove('modal-open'); }
+  closeLogout?.addEventListener('click',closeLogoutModal); cancelLogout?.addEventListener('click',closeLogoutModal);
+  window.addEventListener('click',e=>{ if(e.target===logoutModal) closeLogoutModal(); });
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape' && logoutModal?.style.display==='flex') closeLogoutModal(); });
+  confirmLogout?.addEventListener('click',()=>{ document.body.classList.remove('modal-open'); location.href='admin-login.html' });
+  toggleBtn?.addEventListener('click',()=>sidebar?.classList.toggle('active'));
+
+  /* programs table refs */
+  const tbody=document.getElementById('tbody');
+  const emptyState=document.getElementById('emptyState');
+  const searchBox=document.getElementById('searchBox');
+  const statusFilter=document.getElementById('statusFilter');
+
+  const viewModal=document.getElementById('viewModal'); const viewBody=document.getElementById('viewBody'); const closeView=document.getElementById('closeView'); const closeView2=document.getElementById('closeView2');
+
+  const editModal=document.getElementById('editModal'); const closeEdit=document.getElementById('closeEdit'); const cancelEdit=document.getElementById('cancelEdit'); const addBtn=document.getElementById('addBtn'); const editTitle=document.getElementById('editTitle');
+  const form=document.getElementById('programForm'); const programId=document.getElementById('programId');
+  const image=document.getElementById('image'); const imageFile=document.getElementById('imageFile'); const nameEl=document.getElementById('name'); const ageEl=document.getElementById('age'); const summaryEl=document.getElementById('summary'); const statusEl=document.getElementById('status');
+  const exportCsvBtn=document.getElementById('exportCsvBtn');
+
+  const badge = (s) => `<span class="badge ${s==='Active'?'st-active':'st-inactive'}">${s}</span>`;
+
+  function render(){
+    const q=(searchBox.value||'').toLowerCase(); const st=statusFilter.value;
+    tbody.innerHTML='';
+    const rows=(data||[]).filter(r=>{
+      const matchQ=!q || [r.name,r.age,r.summary].filter(Boolean).some(v=>String(v).toLowerCase().includes(q));
+      const matchS=!st || r.status===st; return matchQ && matchS;
+    });
+    emptyState.style.display=rows.length?'none':'block';
+
+    rows.forEach(r=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
+        <td data-col="ID">${r.id}</td>
+        <td data-col="Image"><img class="avatar" src="${urlFor(r.image)}" alt=""></td>
+        <td data-col="Name">${r.name||'—'}</td>
+        <td data-col="Age">${r.age||'—'}</td>
+        <td data-col="Summary">${r.summary||'—'}</td>
+        <td data-col="Status">${badge(r.status)}</td>
+        <td data-col="Actions">
+          <div class="row-actions">
+            <button class="btn-sm btn-view"   onclick="handleProgramAction(${r.id}, 'view')"><i class="fas fa-eye"></i> View</button>
+            <button class="btn-sm btn-edit"   onclick="handleProgramAction(${r.id}, 'edit')"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-sm btn-toggle" onclick="handleProgramAction(${r.id}, 'toggle')"><i class="fas fa-toggle-on"></i> ${r.status==='Active'?'Deactivate':'Activate'}</button>
+            <button class="btn-sm btn-danger" onclick="handleProgramAction(${r.id}, 'delete')"><i class="fas fa-trash"></i> Delete</button>
+          </div>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function openAdd(){ editTitle.textContent='Add Program'; programId.value=''; [image,nameEl,ageEl,summaryEl].forEach(e=>e.value=''); statusEl.value='Active'; if(imageFile) imageFile.value=''; editModal.style.display='flex'; document.body.classList.add('modal-open'); }
+  function openEdit(row){ editTitle.textContent='Edit Program'; programId.value=row.id; image.value=row.image||''; nameEl.value=row.name||''; ageEl.value=row.age||''; summaryEl.value=row.summary||''; statusEl.value=row.status||'Active'; if(imageFile) imageFile.value=''; editModal.style.display='flex'; document.body.classList.add('modal-open'); }
+  function closeEditModal(){ editModal.style.display='none'; document.body.classList.remove('modal-open'); }
+
+  searchBox.addEventListener('input',render);
+  statusFilter.addEventListener('change',render);
+  [closeView,closeView2].forEach(el=>el&&el.addEventListener('click',()=>viewModal.style.display='none'));
+  window.addEventListener('click',e=>{ if(e.target===viewModal) viewModal.style.display='none'; });
+  closeEdit.addEventListener('click',closeEditModal);
+  cancelEdit.addEventListener('click',closeEditModal);
+  window.addEventListener('click',e=>{ if(e.target===editModal) closeEditModal(); });
+  addBtn.addEventListener('click',openAdd);
+
+  exportCsvBtn.addEventListener('click',()=>{
+    const rows=[['ID','Image','Name','Age','Summary','Status','Created']].concat((data||[]).map(r=>[r.id,r.image,r.name,r.age,r.summary,r.status,r.createdAt]));
+    const csv=rows.map(r=>r.map(x=>`"${String(x??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='programs.csv'; a.click(); URL.revokeObjectURL(a.href);
+  });
+
+  /* expose global action handler */
+  window.handleProgramAction = async (id, action) => {
+    try{
+      const row = (data || []).find(x => String(x.id) === String(id));
+      if(!row){ toast('Row not found'); return; }
+
+      if(action==='view'){
+        viewBody.innerHTML=`
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+            <img src="${urlFor(row.image)}" class="avatar" alt="">
+            <div><h4 style="margin:0">${row.name||'—'}</h4><div style="color:#6b7280">${row.age||''}</div></div>
+          </div>
+          <p><strong>Summary:</strong> ${row.summary||'—'}</p>
+          <p><strong>Status:</strong> ${row.status}</p>
+          <p style="color:#6b7280"><strong>Created:</strong> ${row.createdAt||'—'}</p>`;
+        viewModal.style.display='flex';
+        return;
+      }
+
+      if(action==='edit'){ openEdit(row); return; }
+
+      if(action==='toggle'){
+        const out=await apiToggle(id);
+        if(out.ok){ toast('Status updated'); data=await apiList(); render(); }
+        else toast(out.error||'Update failed');
+        return;
+      }
+
+      if(action==='delete'){
+        if(!confirm('Delete this program?')) return;
+        const out=await apiDelete(id);
+        if(out.ok){ toast('Deleted'); data=await apiList(); render(); }
+        else toast(out.error||'Delete failed');
+        return;
+      }
+    }catch(err){ console.error(err); toast('Action failed'); }
+  };
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const id=programId.value?Number(programId.value):null;
+    const payload={ image:image.value.trim(), name:nameEl.value.trim(), age:ageEl.value.trim(), summary:summaryEl.value.trim(), status:statusEl.value };
+    const file=imageFile?.files?.[0]||null;
+
+    try{
+      let out; if(id) out=await apiUpdate(id,payload,file); else out=await apiCreate(payload,file);
+      if(out&&out.ok){ toast(id?'Updated':'Created'); closeEditModal(); data=await apiList(); render(); }
+      else toast((out&&out.error)?out.error:'Save failed');
+    }catch(err){ console.error(err); toast('Save failed'); }
+  });
+
+  (async()=>{ try{ data=await apiList(); render(); } catch(err){ console.error(err); toast('Failed to load programs'); }})();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,449 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #2c3e50;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  bottom: 0;
+  padding: 20px;
+}
+
+.sidebar h2 {
+    font-size: 1.2rem;     
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    color: #fff;    
+    margin-bottom: 30px;         
+}
+
+.sidebar h2 i {
+    font-size: 1.5rem;      
+    margin-right: 10px;
+    color: orange;         
+}
+
+.sidebar h2 i:hover {
+    color: pink; 
+}
+
+.sidebar nav a {
+  display: block;
+  color: #ccc;
+  text-decoration: none;
+  padding: 12px 15px;
+  margin: 5px 0;
+  border-radius: 8px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar nav a:hover,
+.sidebar nav a.active {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+.sidebar nav a.logout {
+  margin-top: auto;
+  background: #e63946;
+  color: #fff;
+}
+
+.sidebar-toggle {
+    display: none; /* hidden on desktop */
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #333;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: 250px;
+  flex: 1;
+  background: #f9f9f9;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Topbar */
+.topbar {
+  background: #fff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.topbar h1 {
+  font-size: 22px;
+  color: #333;
+}
+
+/* Admin-info */
+
+/* Dropdown spacing */
+.admin-info {
+  position: relative;
+  cursor: pointer;
+}
+
+.admin-info i.fa-user-circle {
+    margin-right: 8px; 
+    font-size: 20px;
+}
+
+.admin-info i.fa-caret-down {
+    margin-left: 5px; 
+}
+
+.admin-info .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%; /* a little more space below Admin text */
+    display: none;
+    min-width: 200px;
+    list-style: none;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 1000; /* make sure it’s above sidebar */
+}
+
+/* Show dropdown */
+.admin-info .dropdown-menu.show {
+    display: block;
+}
+
+
+.admin-info .dropdown-menu li {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-info .dropdown-menu li:last-child {
+    border-bottom: none;
+}
+
+.admin-info .dropdown-menu li a {
+    color: #333;
+    text-decoration: none;
+    display: block;
+}
+
+.admin-info .dropdown-menu li a:hover {
+    background: #ff6b6b;
+    color: #fff;
+}
+
+/* Show dropdown on click */
+.admin-info.show .dropdown-menu {
+    display: block;
+}
+
+/* Modal styling */
+.modal{
+  position: fixed;
+  inset: 0;                      
+  display: none;                 
+  align-items: center;          
+  justify-content: center;       
+  background: rgba(0,0,0,.35);
+  padding: 24px;                 
+  z-index: 9999;
+}
+
+.modal .modal-content{
+  width: 100%;
+  max-width: 620px;              
+  max-height: min(90vh, 800px);  
+  overflow: auto;                
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border-radius: 12px;
+}
+
+/* optional: nicer scrollbar */
+.modal .modal-content::-webkit-scrollbar{ width: 10px; }
+.modal .modal-content::-webkit-scrollbar-thumb{ background:#ddd; border-radius: 8px; }
+
+.modal-content h3 {
+  margin-bottom: 15px;
+}
+
+.modal-content p {
+  margin-bottom: 25px;
+  color: #555;
+}
+
+.modal-buttons button {
+  padding: 10px 20px;
+  margin: 0 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+#confirmLogout {
+  background: #ff6b6b;
+  color: #fff;
+}
+
+#cancelLogout {
+  background: #ccc;
+  color: #333;
+}
+
+.modal-content .close {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #333;
+}
+
+body.modal-open{ overflow: hidden; }
+
+/* Overlay feel */
+.modal{
+  background: rgba(15, 23, 42, .45);        /* darker & modern */
+  backdrop-filter: saturate(120%) blur(2px); /* subtle blur */
+}
+
+/* Compact, centered confirm modal */
+.modal--confirm .modal-content{
+  max-width: 440px;
+  width: 100%;
+  padding: 22px 24px 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.20);
+}
+
+.modal--confirm h3{
+  margin: 0 0 6px;
+  font-size: 18px;
+  color: #111827;
+}
+
+.modal--confirm p{
+  margin: 0 0 16px;
+  color: #4b5563;
+}
+
+/* Close “x” in top-right */
+.modal--confirm .close{
+  position: absolute;
+  right: 14px;
+  top: 10px;
+  font-size: 22px;
+  color: #9ca3af;
+  cursor: pointer;
+}
+.modal--confirm .close:hover{ color:#6b7280; }
+
+/* Buttons row */
+.modal--confirm .modal-buttons{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+/* Buttons */
+.btn-danger{
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-danger:hover{ background:#dc2626; }
+
+.btn-secondary{
+  background: #fff;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-secondary:hover{ background:#f9fafb; }
+
+
+.page-header{
+  display:flex; align-items:center; gap:12px;
+  margin: 0 0 16px;
+}
+
+/* outline pill button */
+.btn-outline {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 14px;
+  border:1px solid #e2e8f0;
+  background:#fff;
+  color:#334155;
+  border-radius:999px;
+  font-weight:600; font-size:14px;
+  text-decoration:none;
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.btn-outline:hover { background:#f8fafc; border-color:#cbd5e1; color:#111827; }
+
+/* primary outline variant (matches your accent color) */
+.btn-outline-primary {
+  border-color:#ff6b6b; color:#ff6b6b; background:transparent;
+}
+.btn-outline-primary:hover {
+  background:#ff6b6b; color:#fff; border-color:#ff6b6b;
+}
+
+
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 30px;
+}
+
+.card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.card h3 {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 22px;
+  font-weight: 600;
+  color: #ff6b6b;
+}
+
+/* Reports */
+
+.reports .chart-container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.reports canvas {
+  max-width: 100%;
+  max-height: 300px;
+}
+#salesChart { height: 300px !important; }
+
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-left: 0; /* Sidebar collapses */
+    }
+
+    .sidebar-toggle {
+        display: block; /* visible on small screens */
+    }
+
+    .sidebar {
+        display: none; /* hidden by default */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        z-index: 1000;
+        background: #2c3e50;
+        padding: 20px;
+        overflow-y: auto;
+        transition: transform 0.3s ease;
+        transform: translateX(-100%);
+    }
+
+    #sidebarToggle {
+        top: 15px;        
+        left: 20px;       
+        padding: 12px;    
+        border-radius: 10px;
+    }
+
+    .topbar h1 {
+        margin-left: 50px;  
+        font-size: 20px;
+    }
+
+    .sidebar.active {
+        transform: translateX(0); /* slide in */
+        display: block;
+    }
+
+    .topbar {
+        flex-wrap: wrap; /* allows admin info to move below if needed */
+    }
+
+    .admin-info {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-left: auto; /* keeps it on right */
+    }
+
+    .admin-info .dropdown-menu {
+        position: fixed;     /* fixed so it won't be hidden behind the sidebar */
+        right: 10px;
+        top: calc(56px + 8px); /* fallback top - JS will set exact top when opened */
+        min-width: 200px;
+    }
+
+    .admin-info i.fa-caret-down {
+        margin-left: 5px; /* spacing from Admin text */
+    }
+
+    .cards {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .card {
+        padding: 15px;
+        font-size: 14px; /* optional, makes text fit */
+    }
+
+}
+
+@media (max-height: 600px){
+  .modal{ align-items: flex-start; }
+  .modal .modal-content{ margin-top: 16px; max-height: calc(100vh - 32px); }
+}
+

@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enrollment - Senesa Child Center</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery-js/1.4.0/css/lightgallery.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap">
+  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="Enrollment.css?v=2">
+  <script src="navbar.js?v=1" defer></script>
+
+</head>
+
+<body>
+  <header class="header" aria-hidden="true">
+  <a href="code1.html#home" class="logo"><i class="fas fa-school"></i> Senesa Child Center</a>
+
+
+  <nav class="navbar">
+    <a href="code1.html#home">Home</a>
+    <a href="code1.html#About">About</a>
+    <a href="code1.html#Education">Education</a>
+    <a href="code1.html#Teacher">Teacher</a>
+    <a href="code1.html#Activities">Activities</a>
+    <a href="code1.html#Gallery">Gallery</a>
+    <a href="code1.html#Books">Books</a>
+    <a class="active" href="enrollment.html">Enrollment</a>
+    <a href="code1.html#Contact">Contact</a>
+  </nav>
+
+  <div class="icons">
+    <div class="fas fa-user" id="login-btn" aria-label="Open login"></div>
+    <!-- cart should go to main page cart section -->
+    <a class="fas fa-shopping-cart" id="cart-btn" href="code1.html#Cart" aria-label="Cart"></a>
+    <div class="fas fa-bars" id="menu-btn" aria-label="Menu"></div>
+  </div>
+
+  <!-- Login modal + overlay (same as main page) -->
+  <div class="login-overlay" id="login-overlay"></div>
+
+  <form class="login-form" id="login-modal">
+    <div class="close-btn" id="close-login-btn" aria-label="Close">&times;</div>
+
+    <!-- Login -->
+    <div class="login-section">
+      <h3>Login Now</h3>
+      <input type="email" placeholder="Your email" class="box" required>
+      <input type="password" placeholder="Your password" class="box" required>
+      <input type="submit" value="Login Now" class="btn">
+      <p>Don't have an account? <a href="#" id="register-link">Register here</a></p>
+    </div>
+
+    <!-- Register -->
+    <div class="register-section" style="display:none;">
+      <h3>Create an Account</h3>
+      <input type="text" placeholder="Your Name" class="box" id="signup-name" required>
+      <input type="email" placeholder="Your Email" class="box" id="signup-email" required>
+      <input type="password" placeholder="Your Password" class="box" id="signup-password" required>
+      <input type="password" placeholder="Confirm Password" class="box" id="confirm-password" required>
+      <input type="submit" value="Register" class="btn" id="register-btn">
+      <p>Already have an account? <a href="#" id="login-link">Login here</a></p>
+    </div>
+  </form>
+</header>
+  <div class="main-offset">
+    <h1>
+    Enrollment - <span>Senesa Child Center</span>
+    </h1>
+   <h2 class="page-subtitle">Please fill out the form to begin the enrollment process.</h2>
+    <div class="wrap"> 
+
+    <div class="card stepper" id="stepper">
+      <div class="step active"><span class="num">1</span><strong>Parent</strong><br><small>Contact & address</small></div>
+      <div class="step"><span class="num">2</span><strong>Child</strong><br><small>Basics & health</small></div>
+      <div class="step"><span class="num">3</span><strong>Plan</strong><br><small>Choose a service</small></div>
+      <div class="step"><span class="num">4</span><strong>Emergency & Consents</strong><br><small>Pickups, approvals</small></div>
+      <div class="step"><span class="num">5</span><strong>Review</strong><br><small>Confirm & submit</small></div>
+    </div>
+
+    <form id="appForm" class="card" novalidate>
+      <!-- STEP 1: Parent -->
+      <fieldset data-step="1">
+        <div class="grid">
+          <div class="col-6">
+            <label class="req" for="parentFirst">Parent first name</label>
+            <input id="parentFirst" name="parentFirst" required maxlength="60" autocomplete="given-name" />
+            <div class="error">Please enter first name.</div>
+          </div>
+          <div class="col-6">
+            <label class="req" for="parentLast">Parent last name</label>
+            <input id="parentLast" name="parentLast" required maxlength="60" autocomplete="family-name" />
+            <div class="error">Please enter last name.</div>
+          </div>
+          <div class="col-6">
+            <label class="req" for="parentEmail">Email</label>
+            <input id="parentEmail" name="parentEmail" type="email" required autocomplete="email" />
+            <div class="error">Enter a valid email address.</div>
+          </div>
+          <div class="col-6">
+            <label class="req" for="parentPhone">Phone</label>
+            <input id="parentPhone" name="parentPhone" inputmode="tel" pattern="^[0-9+\-()\s]{7,}$" required placeholder="e.g. +94 71 123 4567" />
+            <div class="error">Enter a valid phone number.</div>
+          </div>
+          <div class="col-8">
+            <label class="req" for="address">Home address</label>
+            <input id="address" name="address" required maxlength="140" autocomplete="street-address" />
+            <div class="error">Address is required.</div>
+          </div>
+          <div class="col-4">
+            <label class="req" for="city">City</label>
+            <input id="city" name="city" required maxlength="60" />
+            <div class="error">City is required.</div>
+          </div>
+          <div class="col-6">
+            <label for="emergencyName">Emergency contact name</label>
+            <input id="emergencyName" name="emergencyName" maxlength="60" />
+          </div>
+          <div class="col-6">
+            <label for="emergencyPhone">Emergency phone</label>
+            <input id="emergencyPhone" name="emergencyPhone" inputmode="tel" pattern="^[0-9+\-()\s]{7,}$" placeholder="optional" />
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 2: Child -->
+      <fieldset data-step="2" hidden>
+        <div class="grid">
+          <div class="col-6">
+            <label class="req" for="childFirst">Child first name</label>
+            <input id="childFirst" name="childFirst" required maxlength="60" />
+            <div class="error">Please enter child's first name.</div>
+          </div>
+          <div class="col-6">
+            <label class="req" for="childLast">Child last name</label>
+            <input id="childLast" name="childLast" required maxlength="60" />
+            <div class="error">Please enter child's last name.</div>
+          </div>
+          <div class="col-4">
+            <label class="req" for="dob">Date of birth</label>
+            <input id="dob" name="dob" type="date" required />
+            <div class="error">Please choose DOB.</div>
+          </div>
+          <div class="col-4">
+            <label>Age</label>
+            <input id="age" name="age" readonly aria-readonly="true" />
+          </div>
+          <div class="col-4">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender">
+              <option value="">— Select —</option>
+              <option>Female</option>
+              <option>Male</option>
+              <option>Non-binary</option>
+              <option>Prefer not to say</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label for="allergies">Allergies / medical notes</label>
+            <textarea id="allergies" name="allergies" placeholder="e.g., peanuts, dairy; inhaler kept in bag"></textarea>
+          </div>
+          <div class="col-12">
+            <label for="specialNeeds">Special needs / accommodations</label>
+            <textarea id="specialNeeds" name="specialNeeds" placeholder="(optional)"></textarea>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 3: Plan -->
+      <fieldset data-step="3" hidden>
+        <div class="grid">
+          <div class="col-12">
+            <label class="req">Choose Nursery Plan</label>
+             <div class="grid">
+                <label class="cardy col-6">
+                    <input type="radio" name="nursery-plan" value="only-nursery" id="only-nursery-btn" required> Only for Nursery
+                </label>
+                <label class="cardy col-6">
+                    <input type="radio" name="nursery-plan" value="nursery-and-daycare" id="nursery-and-daycare-btn"> Nursery and a Daycare plan
+                </label>
+            </div>
+          </div>
+          <div class="col-12" id="daycare-plans-section" >
+            <label class="req">Choose a daycare plan</label>
+            <div class="grid">
+              <label class="cardy col-6"><input type="radio" name="plan" value="Baby Steps (6–18 mo)" > 👶 Baby Steps — Gentle infant care & sensory play</label>
+              <label class="cardy col-6"><input type="radio" name="plan" value="Tiny Explorers (18–30 mo)"> 🧸 Tiny Explorers — Toddler discovery & first words</label>
+              <label class="cardy col-6"><input type="radio" name="plan" value="Little Learners Preschool (3–5)"> 🎒 Little Learners — Play‑based pre‑K skills</label>
+              <label class="cardy col-6"><input type="radio" name="plan" value="Half‑Day Discovery (AM)"> 🌞 Half‑Day Discovery — Morning session</label>
+              <label class="cardy col-6"><input type="radio" name="plan" value="Full‑Day Adventure"> 🌈 Full‑Day Adventure — Balanced day incl. naps</label>
+              <label class="cardy col-6"><input type="radio" name="plan" value="After‑School Club (5–12)"> ⭐ After‑School Club — Homework & maker time</label>
+            </div>
+            <div class="error">Please select a plan.</div>
+          </div>
+          <div class="col-4">
+            <label class="req" for="startDate">Preferred start date</label>
+            <input id="startDate" name="startDate" type="date"  />
+            <div class="error">Start date is required.</div>
+          </div>
+          <div class="col-4">
+            <label class="req" for="daysPerWeek">Days per week</label>
+            <select id="daysPerWeek" name="daysPerWeek" >
+              <option value="">— Select —</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            </select>
+            <div class="error">Select days per week.</div>
+          </div>
+          <div class="col-4">
+            <label for="schedule">Schedule</label>
+            <select id="schedule" name="schedule">
+              <option>Full Day</option>
+              <option>Half Day (AM)</option>
+              <option>Half Day (PM)</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label>Extras</label>
+            <div class="row">
+              <label class="cardy"><input type="checkbox" name="extras" value="Early Bird (7–8am)"> ⏰ Early Bird (7–8am)</label>
+              <label class="cardy"><input type="checkbox" name="extras" value="Late Owl (5:30–7pm)"> 🌙 Late Owl (5:30–7pm)</label>
+              <label class="cardy"><input type="checkbox" name="extras" value="Meals Included"> 🥗 Meals Included</label>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 4: Emergency & Consents -->
+      <fieldset data-step="4" hidden>
+        <div class="grid">
+          <div class="col-6">
+            <label for="physician">Family physician</label>
+            <input id="physician" name="physician" maxlength="80" />
+          </div>
+          <div class="col-6">
+            <label for="physicianPhone">Physician phone</label>
+            <input id="physicianPhone" name="physicianPhone" inputmode="tel" pattern="^[0-9+\-()\s]{7,}$" />
+          </div>
+          <div class="col-12">
+            <label for="authorizedPickup">Authorized pickup persons (comma separated)</label>
+            <input id="authorizedPickup" name="authorizedPickup" placeholder="e.g., Aunty Mira, Grandpa Sunil" />
+          </div>
+          <div class="col-12">
+            <label for="notes">Other notes for staff</label>
+            <textarea id="notes" name="notes"></textarea>
+          </div>
+          <div class="col-12">
+            <label class="req">Consents</label>
+            <div class="row">
+              <label class="cardy"><input type="checkbox" id="consentMedical" required> I consent to emergency medical care if needed.</label>
+              <label class="cardy"><input type="checkbox" id="consentPolicy" required> I agree to Senesa Child Center policies & code of conduct.</label>
+              <label class="cardy"><input type="checkbox" id="consentPhoto"> I allow my child’s photos to be used in updates.</label>
+            </div>
+            <div class="error">Please accept required consents.</div>
+          </div>
+          <div class="col-6">
+            <label class="req" for="signature">Parent e‑signature (type full name)</label>
+            <input id="signature" name="signature" required maxlength="80" placeholder="Full name" />
+            <div class="error">Signature required.</div>
+          </div>
+          <div class="col-6">
+            <label class="req" for="signDate">Date</label>
+            <input id="signDate" name="signDate" type="date" required />
+            <div class="error">Date required.</div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 5: Review -->
+      <fieldset data-step="5" hidden>
+        <div class="review" id="review"></div>
+        <p class="note">Submitting will create a JSON file you can email, or (later) post to your PHP endpoint.</p>
+      </fieldset>
+
+      <div class="actions">
+        <div class="row">
+          <a id="backHome" href="code1.html" class="btn secondary">◀ Back to Home</a>
+          <button type="button" class="btn ghost" id="saveBtn">Save draft</button>
+          <button type="button" class="btn ghost" id="clearBtn">Clear</button>
+          <button type="button" class="btn ghost" id="printBtn">Print</button>
+        </div>
+        <div class="row">
+          <button type="button" class="btn secondary" id="prevBtn">◀ Prev</button>
+          <button type="button" class="btn" id="nextBtn">Next ▶</button>
+          <button type="submit" class="btn" id="submitBtn" hidden>Submit</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">Saved</div>
+    </div>
+  </div>
+
+<!--footer section start-->
+
+<section class="footer">
+    <div class="box-container">
+        <div class="box">
+            <h3> <i class="fas fa-school"></i>Senesa Child Center</h3>
+            <p>
+                Welcome to Senesa Child Center, a place dedicated to providing quality education and care for young children. We focus on building a strong foundation for their future success.
+            </p>
+            
+        </div>
+
+        <div class="box">
+            <h3>quick link</h3>
+            <a href="#"><i class="fas fa-caret-right"></i>enroll now</a>
+            <a href="#"><i class="fas fa-caret-right"></i>parent poral</a>
+            <a href="#"><i class="fas fa-caret-right"></i>school calender</a>
+            <a href="#"><i class="fas fa-caret-right"></i>lunch menu</a>
+            <a href="#"><i class="fas fa-caret-right"></i>school supply</a>
+
+        </div>
+        <div class="box">
+            <h3>category</h3>
+            <a href="#"><i class="fas fa-caret-right"></i>about us</a>
+            <a href="#"><i class="fas fa-caret-right"></i>academics</a>
+            <a href="#"><i class="fas fa-caret-right"></i>admissions</a>
+            <a href="#"><i class="fas fa-caret-right"></i>news & events</a>
+            <a href="#"><i class="fas fa-caret-right"></i>contact us</a>
+
+        </div>
+
+
+        <div class="box">
+            <h3>extra links</h3>
+            <a href="#"><i class="fas fa-caret-right"></i>privacy policy</a>
+            <a href="#"><i class="fas fa-caret-right"></i>terms of use</a>
+            <a href="#"><i class="fas fa-caret-right"></i>site map</a>
+            <a href="#"><i class="fas fa-caret-right"></i>F&Qs</a>
+            <a href="#"><i class="fas fa-caret-right"></i>accessibility statements</a>
+
+        </div>
+
+    </div>
+
+    <div class="credit"> &copy; copyright @ 2023 by <span> LiNkY</span></div>
+</section>
+
+
+<!--footer section end-->
+ 
+  <script>
+  (function(){
+    const form = document.getElementById('appForm');
+    const stepper = document.getElementById('stepper').children;
+    const steps = Array.from(form.querySelectorAll('fieldset[data-step]'));
+    const nextBtn = document.getElementById('nextBtn');
+    const prevBtn = document.getElementById('prevBtn');
+    const submitBtn = document.getElementById('submitBtn');
+    const saveBtn = document.getElementById('saveBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const printBtn = document.getElementById('printBtn');
+    const toast = document.getElementById('toast');
+    const review = document.getElementById('review');
+    const onlyNurseryBtn = document.getElementById('only-nursery-btn');
+    const nurseryAndDaycareBtn = document.getElementById('nursery-and-daycare-btn');
+    const daycarePlansSection = document.getElementById('daycare-plans-section');
+
+    onlyNurseryBtn.onclick = () => {
+    // Disable all daycare plans when "Only for Nursery" is selected
+    daycarePlansSection.style.pointerEvents = 'none'; // Disable interaction with the daycare section
+    document.querySelectorAll('input[name="plan"]').forEach(plan => {
+        plan.disabled = true; // Disable all daycare plan options
+        plan.checked = false; // Uncheck any selected plan
+    });
+    };
+    
+    nurseryAndDaycareBtn.onclick = () => {
+    // Enable the daycare plans when "Nursery and Daycare Package" is selected
+    daycarePlansSection.style.pointerEvents = 'auto'; // Enable interaction with daycare section
+    document.querySelectorAll('input[name="plan"]').forEach(plan => {
+        plan.disabled = false; // Enable all daycare plan options
+    });
+    };
+
+    document.querySelectorAll('input[name="plan"]').forEach(plan => {
+    plan.disabled = false;  // Enable the daycare options again
+    });
+
+    const KEY = 'tinysteps_app_v1';
+    let current = 1;
+    const USE_BACKEND = false; // set to true and set form.action to your PHP endpoint later
+
+    // Helpers
+    const showToast = (msg)=>{toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1500)}
+    const showStep = (n) => {
+      current = n;
+
+      // toggle fieldsets
+      steps.forEach(fs => fs.hidden = fs.dataset.step != n);
+
+      // toggle stepper UI
+      Array.from(stepper).forEach((el,i) => el.classList.toggle('active', i+1<=n));
+
+      // buttons
+      const backHome  = document.getElementById('backHome');
+      const prevBtn   = document.getElementById('prevBtn');
+      const nextBtn   = document.getElementById('nextBtn');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (backHome) backHome.style.display = (n === 1 ? 'inline-flex' : 'none');
+      if (prevBtn)  prevBtn.style.display  = (n === 1 ? 'none'       : 'inline-flex');
+      if (nextBtn)  nextBtn.hidden         = (n === steps.length);
+      if (submitBtn) submitBtn.hidden      = (n !== steps.length);
+
+      if (n === steps.length) buildReview();
+
+      // scroll top for clarity
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    const getFormData = ()=>{
+      const fd = new FormData(form);
+      const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(x=>x.value);
+      const payload = Object.fromEntries(fd.entries());
+      payload.extras = extras;
+      payload.plan = fd.get('plan');
+      payload['nursery-plan'] = fd.get('nursery-plan');
+      payload.timestamp = new Date().toISOString();
+      // compute age in months/years
+      const dob = payload.dob ? new Date(payload.dob) : null;
+      if(dob){
+        const diffMs = Date.now() - dob.getTime();
+        const ageYears = Math.floor(diffMs / (365.25*24*3600*1000));
+        payload.ageComputedYears = ageYears;
+      }
+      return payload;
+    }
+
+    const saveDraft = ()=>{ localStorage.setItem(KEY, JSON.stringify(getFormData())); showToast('Draft saved'); }
+    const loadDraft = ()=>{
+      const raw = localStorage.getItem(KEY); if(!raw) return;
+      const data = JSON.parse(raw);
+      for(const [k,v] of Object.entries(data)){
+        const el = form.elements[k];
+        if(!el) continue;
+        if(el instanceof RadioNodeList){
+          const radio = form.querySelector(`[name="${k}"][value="${CSS.escape(v)}"]`);
+          if(radio) radio.checked = true;
+        } else if(el.type === 'checkbox'){
+          el.checked = !!v;
+        } else {
+          el.value = v;
+        }
+      }
+      // extras
+      if(Array.isArray(data.extras)){
+        form.querySelectorAll('input[name="extras"]').forEach(cb=>{ cb.checked = data.extras.includes(cb.value); });
+      }
+      updateAge();
+    }
+
+    const clearDraft = ()=>{ localStorage.removeItem(KEY); form.reset(); updateAge(); showToast('Cleared'); showStep(1); }
+
+    // Validation per step
+    const validateStep = ()=>{
+      const fs = steps[current-1];
+      let ok = true;
+      fs.querySelectorAll('.show-error').forEach(el=>el.classList.remove('show-error'));
+      const requiredInputs = fs.querySelectorAll('[required]');
+      requiredInputs.forEach(input=>{
+        if (input.type === 'checkbox' && !input.checked) {
+          ok = false;
+          // put the error class on the wrapper that contains the .error block
+          (input.closest('.col-12') || input.closest('label.cardy'))?.classList.add('show-error');
+        }
+
+        else if(input.type==='radio'){
+          const name = input.name;
+          const groupChecked = form.querySelector(`input[name="${name}"]:checked`);
+          if(!groupChecked){ ok=false; input.closest('.col-12')?.classList.add('show-error'); }
+        }
+        else if(!input.checkValidity()){ ok=false; input.parentElement.classList.add('show-error'); }
+      });
+      
+      if (current === 3) {
+        const nurChoice = form.querySelector('input[name="nursery-plan"]:checked')?.value;
+        if (nurChoice === 'nursery-and-daycare' &&
+            !form.querySelector('input[name="plan"]:checked')) {
+          ok = false;
+          document.getElementById('daycare-plans-section')?.classList.add('show-error');
+        }
+      }
+
+      return ok;
+    }
+    form.addEventListener('change', (e) => {
+      if (e.target.name === 'plan' || e.target.name === 'nursery-plan') {
+        document.getElementById('daycare-plans-section')?.classList.remove('show-error');
+      }
+    });
+
+    form.addEventListener('input', (e) => {
+      const t = e.target;
+      if (t && t.closest('.show-error')) t.closest('.show-error').classList.remove('show-error');
+      if (t && t.checkValidity && t.parentElement) {
+        if (t.checkValidity()) t.parentElement.classList.remove('show-error');
+      }
+      saveDraft();
+    });
+
+    form.addEventListener('change', (e) => {
+      if (e.target.matches('input[type="checkbox"], input[type="radio"]')) {
+        (e.target.closest('.col-12') || e.target.closest('label.cardy'))?.classList.remove('show-error');
+      }
+    });
+
+
+
+
+    // Age calculator
+    const dobEl = form.elements['dob'];
+    const ageEl = form.elements['age'];
+    const updateAge = ()=>{
+      const v = dobEl.value; if(!v){ ageEl.value=''; return; }
+      const dob = new Date(v); const today = new Date();
+      let y = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      const d = today.getDate() - dob.getDate();
+      if(m < 0 || (m===0 && d<0)) y--; // birthday not yet reached
+      ageEl.value = isFinite(y)? `${y} years` : '';
+    }
+    dobEl.addEventListener('change', updateAge);
+
+    // Review builder
+    function kv(key, val){
+      return `<div class="kv"><div><strong>${key}</strong></div><div>${val||'<em>—</em>'}</div></div>`;
+    }
+    const buildReview = ()=>{
+      const p = getFormData();
+      const nur = p['nursery-plan']; // from step 1
+      const nurLabel = nur === 'only-nursery'
+        ? 'Only Nursery'
+        : nur === 'nursery-and-daycare'
+          ? 'Nursery + Daycare'
+          : '—';
+
+      const selectedPlanText =
+        nur === 'only-nursery'
+          ? 'Only Nursery'
+          : nur === 'nursery-and-daycare'
+            ? `Nursery + ${p.plan || '—'}`
+            : '—';
+
+      review.innerHTML = `
+        <h3>Parent</h3>
+        ${kv('Name', `${p.parentFirst||''} ${p.parentLast||''}`)}
+        ${kv('Email', p.parentEmail)}
+        ${kv('Phone', p.parentPhone)}
+        ${kv('Address', `${p.address||''}, ${p.city||''}`)}
+        ${kv('Emergency Contact', `${p.emergencyName||''} ${p.emergencyPhone? '('+p.emergencyPhone+')':''}`)}
+
+        <h3>Child</h3>
+        ${kv('Name', `${p.childFirst||''} ${p.childLast||''}`)}
+        ${kv('DOB', p.dob)}
+        ${kv('Age', p.age || (p.ageComputedYears!=null? p.ageComputedYears+' years':''))}
+        ${kv('Gender', p.gender)}
+        ${kv('Allergies/Medical', p.allergies)}
+        ${kv('Special Needs', p.specialNeeds)}
+
+        <h3>Plan</h3>
+        ${kv('Nursery Choice', nurLabel)}
+        ${kv('Selected Plan', selectedPlanText)}
+        ${kv('Preferred Start', p.startDate)}
+        ${kv('Days/Week', p.daysPerWeek)}
+        ${kv('Schedule', p.schedule)}
+        ${kv('Extras', (p.extras||[]).join(', '))}
+
+        <h3>Emergency & Consents</h3>
+        ${kv('Physician', `${p.physician||''} ${p.physicianPhone? '('+p.physicianPhone+')':''}`)}
+        ${kv('Authorized Pickup', p.authorizedPickup)}
+        ${kv('Notes', p.notes)}
+        ${kv('Photo Consent', document.getElementById('consentPhoto').checked? 'Yes':'No')}
+        ${kv('Signature', `${p.signature||''} — ${p.signDate||''}`)}
+      `;
+    }
+
+    // Navigation
+    nextBtn.addEventListener('click', ()=>{
+      if(!validateStep()) return;
+      showStep(Math.min(current+1, steps.length));
+    });
+    prevBtn.addEventListener('click', ()=> showStep(Math.max(current-1,1)) );
+
+    // Save/Clear/Print
+    saveBtn.addEventListener('click', saveDraft);
+    clearBtn.addEventListener('click', clearDraft);
+    printBtn.addEventListener('click', ()=> window.print());
+
+    // Auto-save on change
+    form.addEventListener('input', ()=>{
+      // live validation visuals
+      const t = event.target;
+      if(t && t.closest('.show-error')) t.closest('.show-error').classList.remove('show-error');
+      if(t && t.checkValidity && t.parentElement) {
+        if(t.checkValidity()) t.parentElement.classList.remove('show-error');
+      }
+      saveDraft();
+    });
+
+    // Submit
+    form.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      if(!validateStep()) return;
+      const payload = getFormData();
+      if(USE_BACKEND && form.action){
+        const hidden = document.createElement('input');
+        hidden.type='hidden'; hidden.name='payloadJSON'; hidden.value = JSON.stringify(payload);
+        form.appendChild(hidden);
+        form.submit();
+      } else {
+        const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href=url; a.download=`tinysteps_application_${Date.now()}.json`;
+        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        showToast('Application JSON downloaded');
+      }
+    });
+
+    // Setup limits
+    const today = new Date().toISOString().slice(0,10);
+    form.elements['dob'].max = today;
+    form.elements['startDate'].min = today;
+    form.elements['signDate'].max = today;
+
+    // Init
+    loadDraft();
+    showStep(1);
+    })();
+    </script>
+
+  </body>
+</html>

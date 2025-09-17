@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Teachers - Senesa Child Center</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    :root {
+      --cell-font: 13.5px;
+      --cell-pad-y: 10px;
+      --cell-pad-x: 10px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 20px;
+      max-width: 640px;
+      width: 100%;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group label {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      height: 80px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .modal-buttons button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .photo-uploader {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .photo-uploader input {
+      width: 70%;
+    }
+
+    .photo-uploader img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .page-head {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      min-width: 240px;
+    }
+
+    .select {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    .btn-primary {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-ghost {
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #333;
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border: 1px solid #ff6b6b;
+      color: #ff6b6b;
+      border-radius: 999px;
+      background: #fff;
+      font-weight: 600;
+    }
+
+    .btn-outline:hover {
+      background: #ff6b6b;
+      color: #fff;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    table.teachers {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table.teachers thead {
+      background: #f5f5f5;
+    }
+
+    table.teachers th,
+    table.teachers td {
+      padding: var(--cell-pad-y) var(--cell-pad-x);
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      font-size: var(--cell-font);
+      vertical-align: top;
+    }
+
+    table.teachers th {
+      white-space: nowrap;
+      word-break: normal;
+    }
+
+    table.teachers td {
+      word-break: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    table.teachers th:nth-child(1) {
+      width: 36px;
+    }
+
+    table.teachers th:nth-child(2) {
+      width: 60px;
+    }
+
+    table.teachers th:nth-child(6) {
+      width: 70px;
+    }
+
+    table.teachers th:nth-child(11) {
+      width: 92px;
+    }
+
+    table.teachers th:nth-child(12) {
+      width: 220px;
+    }
+
+    .row-actions {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      align-items: start;
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      width: 100%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-view {
+      background: #64748b;
+      color: #fff;
+    }
+
+    .btn-edit {
+      background: #4caf50;
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .btn-toggle {
+      background: #22c55e;
+      color: #fff;
+    }
+
+    .empty {
+      padding: 30px;
+      color: #777;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid #eee;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .st-active {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .st-inactive {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .wa-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #25d366;
+      color: #fff;
+      font-size: 12px;
+      text-decoration: none;
+      margin-left: 6px;
+    }
+
+    .wa-chip:hover {
+      filter: brightness(0.95);
+    }
+
+    @media (max-width: 1280px) {
+      :root {
+        --cell-font: 12.5px;
+        --cell-pad-y: 8px;
+        --cell-pad-x: 8px;
+      }
+
+      table.teachers th:nth-child(12) {
+        width: 200px;
+      }
+
+      .row-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      table.teachers,
+      table.teachers thead,
+      table.teachers tbody,
+      table.teachers th,
+      table.teachers td,
+      table.teachers tr {
+        display: block !important;
+        width: 100% !important;
+      }
+
+      table.teachers thead {
+        display: none !important;
+      }
+
+      table.teachers tr {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+      }
+
+      table.teachers td {
+        border-bottom: 1px solid #f1f1f1;
+        padding: 12px 14px;
+        display: flex !important;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      table.teachers td:last-child {
+        border-bottom: none;
+      }
+
+      table.teachers td::before {
+        content: attr(data-col);
+        font-weight: 600;
+        color: #6b7280;
+        flex: 0 0 45%;
+        max-width: 45%;
+      }
+
+      table.teachers td > * {
+        flex: 1 1 auto;
+        text-align: right;
+        word-break: break-word;
+      }
+
+      .row-actions {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .btn-sm {
+        font-size: 12px;
+      }
+    }
+
+    /* Style for file input */
+    #imageUpload {
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    #imageUpload:focus {
+      border-color: #ff6b6b;
+      outline: none;
+    }
+
+    .photo-uploader div {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 14px;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2><i class="fas fa-school"></i> Senesa Child Center - Admin</h2>
+    <nav>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="students.html"><i class="fas fa-user-graduate"></i> Enrollments</a>
+      <a href="teachers.html" class="active"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+      <a href="programs.html"><i class="fas fa-book-open"></i> Programs</a>
+      <a href="gallery.html"><i class="fas fa-images"></i> Gallery</a>
+      <a href="books.html"><i class="fas fa-book"></i> Books</a>
+      <a href="messages.html"><i class="fas fa-envelope"></i> Messages</a>
+      <a href="users.html"><i class="fas fa-users-cog"></i> Users</a>
+      <a href="orders.html"><i class="fas fa-receipt"></i> Orders</a>
+      <a href="settings.html"><i class="fas fa-cog"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <!-- Main -->
+  <main class="main-content">
+    <header class="topbar">
+      <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1>Teachers</h1>
+      <div class="admin-info dropdown">
+        <i class="fas fa-user-circle"></i> Admin <i class="fas fa-caret-down"></i>
+        <ul class="dropdown-menu">
+          <li><a href="profile.html">Profile</a></li>
+          <li><a href="change-password.html">Change Password</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <section class="content">
+      <div style="margin-bottom:16px">
+        <a href="dashboard.html" class="btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+      </div>
+
+      <div class="page-head">
+        <div>
+          <h2 style="margin:0;color:#333">Teacher Directory</h2>
+          <p style="margin:4px 0 0;color:#6b7280;font-size:13px">Manage teacher profiles, availability, and visibility.</p>
+        </div>
+        <div class="filters">
+          <input id="searchBox" class="search" placeholder="Search name / role / qualification / WhatsApp" />
+          <select id="statusFilter" class="select">
+            <option value="">All Statuses</option>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+          </select>
+          <button id="addBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Teacher</button>
+          <button id="importBtn" class="btn-ghost"><i class="fas fa-file-import"></i> Import JSON</button>
+          <input id="importInput" type="file" accept="application/json" style="display:none" />
+          <button id="exportCsvBtn" class="btn-ghost"><i class="fas fa-file-export"></i> Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="teachers">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Photo</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Qualifications</th>
+              <th>Exp (yrs)</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>WhatsApp</th>
+              <th>Availability</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div id="emptyState" class="empty" style="display:none;">No teachers found.</div>
+    </section>
+
+    <footer style="text-align:center;padding:15px;margin-top:auto;background:#fff;box-shadow:0 -2px 5px rgba(0,0,0,.1);">
+      &copy; 2025 Senesa Child Center. All rights reserved.
+    </footer>
+  </main>
+
+  <!-- View Modal -->
+  <div id="viewModal" class="modal">
+    <div class="modal-content" style="max-width:520px">
+      <span class="close" id="closeView">&times;</span>
+      <h3>Teacher Profile</h3>
+      <div id="viewBody" style="margin-top:10px;text-align:left;color:#444"></div>
+      <div class="modal-buttons">
+        <button class="btn-ghost" id="closeView2">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content" style="max-width:640px">
+      <span class="close" id="closeEdit">&times;</span>
+      <h3 id="editTitle">Add Teacher</h3>
+      <form id="teacherForm">
+        <input type="hidden" id="teacherId" />
+
+        <!-- Photo Section -->
+        <div class="form-group photo-uploader">
+            <div style="flex:1">
+                <label for="photoUrl">Photo URL</label>
+                <input id="photoUrl" name="photo" placeholder="https://… or ../teacher1.png" />
+            </div>
+            <div>
+                <label for="imageUpload">Or upload image</label>
+                <input id="imageUpload" type="file" accept="image/*" />
+            </div>
+        </div>
+
+        <!-- Teacher Information -->
+        <div class="split">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="first_name" placeholder="First Name" required />
+            </div>
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="last_name" placeholder="Last Name" required />
+            </div>
+        </div>
+
+        <div class="split">
+            <div class="form-group">
+                <label for="role">Role</label>
+                <input id="role" name="role" placeholder="Teacher / Principal / Assistant" />
+            </div>
+            <div class="form-group">
+                <label for="experience">Experience (years)</label>
+                <input id="experience" name="experience" type="number" min="0" step="1" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="qualifications">Qualifications</label>
+            <input id="qualifications" name="qualifications" placeholder="e.g., Montessori Diploma, B.Ed." />
+        </div>
+
+        <div class="split">
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input id="phone" name="phone" placeholder="+94 …" />
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="whatsapp">WhatsApp Number</label>
+            <input id="whatsapp" name="whatsapp" placeholder="+94 7X XXX XXXX" />
+        </div>
+
+        <div class="form-group">
+            <label for="availability">Availability (short note)</label>
+            <textarea id="availability" name="availability" rows="2" placeholder="Weekdays 8:00–12:30; Parent meetings Fri 12:30–1:30"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option>Active</option>
+                <option>Inactive</option>
+            </select>
+        </div>
+
+        <div class="modal-buttons">
+            <button class="btn-primary" type="submit">Save</button>
+            <button class="btn-ghost" type="button" id="cancelEdit">Cancel</button>
+        </div>
+    </form>
+
+    </div>
+  </div>
+
+<script>
+  // Toast message function for displaying success or error messages
+  const toast = (msg) => {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.textContent = msg;
+    t.style.position = 'fixed';
+    t.style.top = '10px';
+    t.style.right = '10px';
+    t.style.backgroundColor = '#4CAF50'; // Green for success
+    t.style.padding = '10px';
+    t.style.borderRadius = '5px';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000); // Remove after 3 seconds
+  };
+
+  const API = '../api/teachers.php'; 
+  let data = [];
+
+  // Fetch list of teachers
+  async function apiList() {
+    try {
+      const res = await fetch(API + '?action=list');
+      const data = await res.json();
+      return data.data || [];
+    } catch (err) {
+      console.error("Error fetching teachers:", err);
+    }
+  }
+
+  // Create new teacher
+  async function apiCreate(payload, file) { 
+    const f = new FormData(); 
+    Object.entries(payload).forEach(([k, v]) => f.append(k, v ?? '')); 
+    if (file) f.append('file', file);
+    f.append('action', 'create'); 
+    return (await fetch(API, { method: 'POST', body: f })).json(); 
+  }
+
+  // Update teacher details
+  async function apiUpdate(id, payload, file) { 
+    const f = new FormData(); 
+    Object.entries(payload).forEach(([k, v]) => f.append(k, v ?? '')); 
+    if (file) f.append('file', file); 
+    f.append('action', 'update'); 
+    f.append('id', id); 
+    return (await fetch(API, { method: 'POST', body: f })).json(); 
+  }
+
+  // Toggle teacher status (Active/Inactive)
+  async function apiToggle(id) { 
+    const f = new FormData(); 
+    f.append('action', 'toggle'); 
+    f.append('id', id); 
+    return (await fetch(API, { method: 'POST', body: f })).json(); 
+  }
+
+  // Delete teacher
+  async function apiDelete(id) { 
+    const f = new FormData(); 
+    f.append('action', 'delete'); 
+    f.append('id', id); 
+    return (await fetch(API, { method: 'POST', body: f })).json(); 
+  }
+
+  // Fetch teachers and render them
+  async function fetchTeachers() {
+    try {
+      const res = await fetch('api/teachers.php?action=list');
+      const data = await res.json();
+      if (data.ok) {
+        renderTeachers(data.data); // Render teachers if data is valid
+      } else {
+        console.error('Error fetching teachers:', data.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+
+  // Render teachers in table
+  function renderTeachers(teachers) {
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = ''; // Clear existing data
+
+    if (teachers.length === 0) {
+      document.getElementById('emptyState').style.display = 'block'; // Show "No teachers found"
+      return;
+    }
+
+    document.getElementById('emptyState').style.display = 'none'; // Hide "No teachers found" message
+
+    teachers.forEach((teacher) => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${teacher.id}</td>
+        <td><img src="uploads/teachers/${teacher.photo}" alt="${teacher.first_name}" class="avatar" /></td>
+        <td>${teacher.first_name} ${teacher.last_name}</td>
+        <td>${teacher.role}</td>
+        <td>${teacher.qualifications}</td>
+        <td>${teacher.experience}</td>
+        <td>${teacher.phone}</td>
+        <td>${teacher.email}</td>
+        <td>${teacher.whatsapp}</td>
+        <td>${teacher.availability}</td>
+        <td>${teacher.status}</td>
+        <td>
+          <button class="btn-sm btn-view" data-id="${teacher.id}">View</button>
+          <button class="btn-sm btn-edit" data-id="${teacher.id}">Edit</button>
+          <button class="btn-sm btn-danger" data-id="${teacher.id}">Delete</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // Add Teacher Modal Handling
+  const addBtn = document.getElementById('addBtn');
+  const editModal = document.getElementById('editModal');
+  const editTitle = document.getElementById('editTitle');
+  const teacherForm = document.getElementById('teacherForm');
+  const teacherId = document.getElementById('teacherId');
+
+  // Open Add Teacher modal
+  addBtn.addEventListener('click', function () {
+    teacherForm.reset();
+    editTitle.textContent = 'Add Teacher';
+    teacherId.value = '';
+    editModal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+  });
+
+  // Close modal
+  const closeEdit = document.getElementById('closeEdit');
+  const cancelEdit = document.getElementById('cancelEdit');
+
+  closeEdit.addEventListener('click', () => {
+    editModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  });
+
+  cancelEdit.addEventListener('click', () => {
+    editModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  });
+
+  // Image upload functionality for teacher
+  const imageUpload = document.getElementById('imageUpload');
+  const photoPreview = document.getElementById('photoPreview');
+
+  imageUpload.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        if (photoPreview) {
+          photoPreview.src = e.target.result;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+
+// Handle form submission for Add/Edit Teacher
+document.addEventListener('DOMContentLoaded', () => {
+  const adminInfo = document.querySelector('.admin-info'); 
+  const dropdown = adminInfo?.querySelector('.dropdown-menu');
+  const logoutBtn = document.getElementById('logoutBtn'); 
+  const logoutModal = document.getElementById('logoutModal');
+  const closeLogout = logoutModal?.querySelector('.close');
+  const confirmLogout = document.getElementById('confirmLogout'); 
+  const cancelLogout = document.getElementById('cancelLogout');
+  const toggleBtn = document.querySelector('.sidebar-toggle'); 
+  const sidebar = document.querySelector('.sidebar');
+
+  adminInfo?.addEventListener('click', (e) => { e.stopPropagation(); dropdown?.classList.toggle('show'); });
+  document.addEventListener('click', () => dropdown?.classList.remove('show'));
+  logoutBtn?.addEventListener('click', (e) => { 
+    e.preventDefault(); 
+    if (!logoutModal) return; 
+    logoutModal.style.display = 'flex'; 
+    dropdown?.classList.remove('show'); 
+    document.body.classList.add('modal-open'); 
+  });
+
+  closeLogout?.addEventListener('click', closeLogoutModal);
+  cancelLogout?.addEventListener('click', closeLogoutModal);
+
+  const tbody = document.getElementById('tbody');
+  const emptyState = document.getElementById('emptyState');
+  const searchBox = document.getElementById('searchBox');
+  const statusFilter = document.getElementById('statusFilter');
+
+  const viewModal = document.getElementById('viewModal');
+  const viewBody = document.getElementById('viewBody');
+  const closeView = document.getElementById('closeView');
+  const closeView2 = document.getElementById('closeView2');
+
+  const editModal = document.getElementById('editModal');
+  const closeEdit = document.getElementById('closeEdit');
+  const cancelEdit = document.getElementById('cancelEdit');
+  const addBtn = document.getElementById('addBtn');
+  const editTitle = document.getElementById('editTitle');
+  const form = document.getElementById('teacherForm');
+  const teacherId = document.getElementById('teacherId');
+  const photoUrl = document.getElementById('photoUrl');
+  const photoPreview = document.getElementById('photoPreview');
+  const firstNameInput = document.getElementById('firstName');
+  const lastNameInput = document.getElementById('lastName');
+  const roleInput = document.getElementById('role');
+  const experienceInput = document.getElementById('experience');
+  const qualificationsInput = document.getElementById('qualifications');
+  const phoneInput = document.getElementById('phone');
+  const emailInput = document.getElementById('email');
+  const whatsappInput = document.getElementById('whatsapp');
+  const availabilityInput = document.getElementById('availability');
+  const statusInput = document.getElementById('status');
+
+  document.getElementById('cancelEdit').addEventListener('click', closeEditModal);
+  document.getElementById('addBtn').addEventListener('click', openAdd); // Add Teacher
+
+  addBtn.addEventListener('click', function () {
+    document.getElementById('teacherForm').reset();
+    editModal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+  });
+
+  function openAdd() {
+    editTitle.textContent = 'Add Teacher';
+    teacherId.value = '';
+    [photoUrl, firstNameInput, lastNameInput, roleInput, experienceInput, qualificationsInput, phoneInput, emailInput, whatsappInput, availabilityInput].forEach(el => el.value = '');
+    statusInput.value = 'Active';
+    const photoPreview = document.getElementById('photoPreview');
+    if (photoPreview) {
+      photoPreview.src = 'default-photo.jpg'; 
+    }
+    editModal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+  }
+
+  document.querySelectorAll('.close').forEach((closeButton) => {
+    closeButton.addEventListener('click', (e) => {
+      if (e.target.closest('#editModal')) {
+        closeEditModal();
+      }
+    });
+  });
+
+  function closeEditModal() {
+    editModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  }
+
+  document.getElementById('imageUpload').addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const photoPreview = document.getElementById('photoPreview');
+        if (photoPreview) {
+          photoPreview.src = e.target.result;
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  // Handle form submission for Add/Edit Teacher
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Get form values
+  const firstName = firstNameInput.value.trim();
+  const lastName = lastNameInput.value.trim();
+
+  // Check if First Name and Last Name are filled
+  if (!firstName || !lastName) {
+    toast('First and Last Name are required');
+    return; // Stop form submission if validation fails
+  }
+
+  // Log form data to verify it's being collected correctly
+  console.log('Form Data:', {
+    first_name: firstName,
+    last_name: lastName,
+    role: roleInput.value.trim(),
+    experience: experienceInput.value ? Number(experienceInput.value) : null,
+    qualifications: qualificationsInput.value.trim(),
+    phone: phoneInput.value.trim(),
+    email: emailInput.value.trim(),
+    whatsapp: whatsappInput.value.trim(),
+    availability: availabilityInput.value.trim(),
+    status: statusInput.value.trim(),
+    photo: photoUrl.value.trim() // Optional
+  });
+
+  // Create FormData object
+  const formData = new FormData(teacherForm);  // Collect all form data automatically
+
+  // Check if photo is uploaded
+  const fileInput = document.getElementById('imageUpload');
+  const file = fileInput.files[0];
+  if (file) {
+    formData.append('file', file);
+  }
+
+  try {
+    let response;
+    const id = teacherId.value ? Number(teacherId.value) : null;
+    if (id) {
+      response = await apiUpdate(id, formData); // Update teacher
+    } else {
+      response = await apiCreate(formData); // Create new teacher
+    }
+
+    if (response.ok) {
+      toast('Teacher data saved successfully!');
+      data = await apiList(); // Re-fetch and render updated data
+      renderTeachers(data);
+      editModal.style.display = 'none'; // Close modal
+      document.body.classList.remove('modal-open');
+    } else {
+      toast(response.error || 'Save failed');
+    }
+  } catch (err) {
+    console.error('Error:', err);
+    toast('Error while saving teacher data');
+  }
+});
+
+
+
+
+  tbody.addEventListener('click', async (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const id = Number(btn.dataset.id);
+    const teacher = data.find(t => t.id === id);
+    if (!teacher) return;
+
+    if (btn.classList.contains('btn-view')) {
+      viewTeacher(teacher);
+    } else if (btn.classList.contains('btn-edit')) {
+      openEdit(teacher);
+    } else if (btn.dataset.act === 'toggle') {
+      toggleTeacherStatus(teacher);
+    } else if (btn.dataset.act === 'delete') {
+      deleteTeacher(teacher);
+    }
+  });
+
+  const viewTeacher = (teacher) => {
+    viewBody.innerHTML = ` 
+      <div style="display:flex;gap:12px;align-items:center;margin-bottom:8px">
+        <img src="uploads/teachers/${teacher.photo}" class="avatar" alt="${teacher.first_name} ${teacher.last_name}"/>
+        <div><h4 style="margin:0">${teacher.first_name || '—'} ${teacher.last_name || '—'}</h4>
+        <div style="color:#6b7280">${teacher.role || ''}</div></div>
+      </div>
+      <p><strong>Qualifications:</strong> ${teacher.qualifications || '—'}</p>
+      <p><strong>Experience:</strong> ${teacher.experience || '—'} years</p>
+      <p><strong>Phone:</strong> ${teacher.phone || '—'}</p>
+      <p><strong>Email:</strong> ${teacher.email || '—'}</p>
+      <p><strong>WhatsApp:</strong> ${teacher.whatsapp || '—'}</p>
+      <p><strong>Availability:</strong> ${teacher.availability || '—'}</p>
+      <p><strong>Status:</strong> ${teacher.status}</p>
+      <p style="color:#6b7280"><strong>Created:</strong> ${teacher.createdAt || '—'}</p>
+    `;
+    viewModal.style.display = 'flex';
+  };
+
+  const toggleTeacherStatus = async (teacher) => {
+    teacher.status = teacher.status === 'Active' ? 'Inactive' : 'Active';
+    await apiToggle(teacher.id);
+    data = await apiList();
+    renderTeachers(data);
+  };
+
+  const deleteTeacher = async (teacher) => {
+    if (confirm(`Are you sure you want to delete ${teacher.first_name} ${teacher.last_name}?`)) {
+      await apiDelete(teacher.id);
+      data = await apiList();
+      renderTeachers(data);
+    }
+  };
+
+  (async () => {
+    try {
+      data = await apiList();
+      renderTeachers(data);
+    } catch (err) {
+      console.error(err);
+      toast('Failed to load teachers');
+    }
+  });
+});
+</script>
+
+
+
+
+
+</body>
+</html>

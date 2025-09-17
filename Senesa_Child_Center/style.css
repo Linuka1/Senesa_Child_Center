@@ -1,0 +1,1336 @@
+
+:root {
+    --orange: #f9ba60;
+    --pink: #e9768f;
+    --black: #1d1c1c;
+    --white: #fff;
+    --light-color: #666;
+    --box-shadow: 0 .5rem rgba(0, 0, 0, .1);
+    --spacing-unit: 1rem;
+    --border-radius: 0.5rem;
+    --font-size-base: 1.6rem;
+    --high-contrast: #111;
+}
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--orange);
+    border-radius: 10px;
+}
+
+#cart-btn {
+    font-size: 24px; 
+    color: black; 
+    cursor: pointer; 
+    transition: color 0.3s ease;
+}
+
+#cart-btn:hover {
+    color: orange; 
+}
+
+
+* {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+    border: none;
+    text-decoration: none;
+    text-transform: capitalize;
+    transition: all .2s linear;
+    
+}
+
+html {
+    font-size: 62.5%;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+section{
+    padding: 3rem 7%;
+    scroll-margin-top: 35px; 
+}
+
+.heading{
+    font-size: 4rem;
+    color: var(--black);
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bolder;
+    margin-bottom: 6rem;
+}
+
+.heading span{
+    color: var(--orange);
+    text-transform: uppercase;
+
+}
+
+.btn {
+    font-size: 1.7rem;
+    margin-top: 1rem;
+    display: inline-block;
+    padding: .8rem 3rem;
+    border-radius: .5rem;
+    border: .2rem solid var(--orange);
+    color: var(--orange);
+    background: none;
+    cursor: pointer;
+    color: var(--high-contrast);
+}
+.btn:hover {
+    background: var(--orange);
+    color: var(--white);
+}
+
+/* Make the HTML hidden attribute always hide elements */
+[hidden] { display: none !important; }
+
+
+/* header */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2rem 9%;
+    background: var(--white);
+    box-shadow: var(--box-shadow);
+    transition: background 0.3s ease;
+   
+}
+
+.header .logo {
+    font-size: 2.5rem;
+    font-weight: bolder;
+    color: var(--black);
+    text-decoration: none;
+    transition: text-decoration 0.3s ease;  
+}
+
+.header .logo:hover {
+    text-decoration: underline;  
+    color: var(--pink);
+}
+.header .logo i {
+    color: var(--orange);
+}
+
+.header .navbar a {
+    font-size: 1.7rem;
+    margin: 0 1rem;
+    color: var(--black);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.3s ease-in-out;
+   
+}
+
+.header .navbar a.active{
+  color: var(--orange);
+  border-bottom: 2px solid var(--orange);
+}
+
+.header .navbar a:hover{
+    color: var(--orange);
+    border-bottom: 2px solid var(--orange);
+}
+
+.header .icons div:hover {
+    color: var(--orange);
+}
+.header .icons div {
+    font-size: 3rem;
+    margin-left: 1rem;
+    color: var(--black);
+    cursor: pointer;
+}
+
+#menu-btn {
+    display: none;
+}
+
+/* Modal Styles */
+.header .login-form {
+    display: none; 
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 35rem;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow);
+    z-index: 9999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease, pointer-events 0.3s ease;
+}
+
+.header .login-overlay {
+    display: none; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    transition: opacity 0.3s ease;
+}
+
+.header .login-form.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.header .login-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+.header .login-form .close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    color: var(--black);
+    cursor: pointer;
+}
+
+.header .login-form h3 {
+    font-size: 2rem;
+    color: var(--black);
+    text-align: center;
+}
+
+.header .login-form .box {
+    width: 100%;
+    margin: .7rem 0;
+    background: #eee;
+    border-radius: .5rem;
+    padding: 1rem;
+    font-size: 1.6rem;
+    color: var(--black);
+    text-transform: capitalize;
+}
+
+.header .login-form p {
+    font-size: 1.4rem;
+    padding: .5rem 0;
+    color: var(--light-color);
+}
+
+.header .login-form p a {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
+.header .login-form .btn {
+    background-color: var(--orange);
+    color: var(--white);
+    padding: 1rem 2rem;
+    font-size: 1.7rem;
+    border-radius: .5rem;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.header .login-form .btn:hover {
+    background-color: var(--dark-orange);
+    color: orange;
+}
+
+.header .login-form .register-section {
+    display: none;
+}
+
+.header .login-form .login-section,
+.header .login-form .register-section {
+    padding: 2rem;
+}
+
+/* Home Section */
+.home {
+    min-height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    align-items: center;
+    position: relative;
+    background: var(--white);
+    justify-content: center;
+    padding: 2rem;
+}
+
+.home .content {
+    flex: 1 1 40rem;
+    text-align: left;
+    font-size: 3rem;
+    animation: fadeIn 1.2s ease-out; 
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.home .content h3 {
+    font-size: 3.5rem;
+    color: var(--black);
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-transform: none;
+}
+
+.home .content h3 span {
+    color: var(--pink); /* Highlight the "Kindergarten" word */
+    text-transform: uppercase; 
+}
+
+.home .content p {
+    font-size: 1.8rem;
+    color: var(--gray);
+    margin-bottom: 2rem;
+}
+
+.home .content .btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.6rem;
+    color: #fff;
+    background:var(--pink);
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: background 0.3s ease;
+}
+
+.home .content .btn:hover {
+    background: var(--orange);
+}
+
+/* Image Section */
+.home .image {
+    flex: 1 1 50rem;
+    text-align: center;
+}
+
+.home .image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    padding: 1rem;
+}
+
+/* Custom Shape Divider */
+.custom-shape-divider-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.custom-shape-divider-bottom svg {
+    position: relative;
+    display: block;
+    width: calc(100% + 1.3px);
+    height: 120px;
+    transform: rotateY(180deg); /* Flip the shape */
+}
+
+.custom-shape-divider-bottom .shape-fill {
+    fill: var(--pink); /* Shape background color */
+}
+
+/* About Us Section */
+.About {
+    background-color: var(--pink); /* Soft pink background */
+    padding: 4rem 2rem;
+    border-radius: 1rem;
+    color: var(--white); /* White text for contrast */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Subtle shadow for depth */
+}
+.About h1{
+    margin-top: 10px;
+}
+.About .heading {
+    text-align: center;
+    font-size: 3.5rem; /* Large heading font size */
+    color: var(--white);
+    margin-bottom: 3rem;
+}
+
+.About .heading span {
+    color: var(--orange); /* Highlight "About" */
+}
+
+.About .row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2.5rem;
+}
+
+.About .row .image {
+    flex: 1 1 45%; /* Allocate space for the image */
+    text-align: center;
+}
+
+.About .row .image img {
+    width: 100%;
+    max-width: 500px; /* Ensures the image doesn’t get too large */
+    height: auto;
+    border-radius: 1rem; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Shadow around image */
+    animation: fadeIn 1.5s ease-in-out; /* Smooth fade-in effect */
+}
+
+.About .row .content {
+    flex: 1 1 50%; /* Allocate space for the text content */
+    text-align: left;
+}
+
+.About .row .content h3 {
+    font-size: 3rem; /* Subheading font size */
+    margin-bottom: 1.5rem;
+    color: var(--white);
+    font-weight: bold;
+    line-height: 1.3;
+    letter-spacing: 0.5px; /* Slight letter spacing for readability */
+}
+
+.About .row .content p {
+    font-size: 1.6rem; /* Paragraph font size */
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9); /* Slight transparency for elegance */
+    margin-bottom: 2rem;
+}
+
+.About .row .content .btn {
+    display: inline-block;
+    padding: 1rem 2rem;
+    font-size: 1.5rem;
+    color: var(--pink); /* Button text color */
+    background-color: var(--white); /* Button background */
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background 0.3s ease, color 0.3s ease;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); /* Button shadow */
+}
+
+.About .row .content .btn:hover {
+    background-color: var(--orange); /* Button hover background */
+    color: var(--white); /* Button hover text color */
+    transform: translateY(-3px); /* Slight lift on hover */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Shadow on hover */
+}
+
+/* Optional: Add a smooth fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.Education {
+    width: 100%; /* Ensures full width */
+    padding: 4rem 0; /* Vertical spacing */
+    margin: 0; /* Removes any external gaps */
+    background: linear-gradient(135deg, #fdf2f8, #fce1ea); /* Gradient background */
+    border-radius: 0; /* Removes unnecessary corners */
+}
+body, html {
+    margin: 0; /* Resets browser default margin */
+    padding: 0;
+    width: 100%; /* Ensures full-page coverage */
+}
+
+
+
+
+
+.Education .heading {
+    text-align: center;
+    font-size: 3.5rem; /* Slightly larger heading */
+    margin-bottom: 3rem; /* Increased spacing for better visual balance */
+    color: var(--pink);
+}
+
+.Education .box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr)); /* Improved responsiveness */
+    gap: 2rem; /* Increased gap for better spacing */
+}
+
+.Education .box-container .box {
+    background: #ffeef2; /* Light pastel background for contrast */
+    border-radius: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Light shadow */
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.Education .box-container .box:hover {
+    transform: translateY(-10px); /* Hover animation for interactivity */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.Education .box-container .box h3 {
+    font-size: 2.2rem; /* Suitable size for the title */
+    color: var(--pink);
+    margin-bottom: 1rem;
+}
+
+.Education .box-container .box p {
+    font-size: 1.6rem; /* Slightly larger for readability */
+    color: var(--black);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.Education .box-container .box img {
+    width: 100%;
+    height: 200px; /* Fixed height for uniformity */
+    object-fit: cover;
+    border-radius: 0.5rem; /* Rounded corners for the image */
+    margin-top: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.Education .box-container .box:hover img {
+    transform: scale(1.05); /* Zoom effect on hover */
+}
+
+
+
+/* teacher */
+.teacher{
+  background: #0000ff no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+.Teacher .box-container{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(30rem, 1fr));
+  gap: 1.5rem;
+}
+.Teacher h1{
+    margin-top: 10px;
+}
+.Teacher .box-container .box{
+  background: var(--white);
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: var(--box-shadow);
+  border-radius: 2rem;
+}
+.Teacher .box-container .box img{ height: 30rem; }
+.Teacher .box-container .box h3{ font-size: 2rem; color: var(--black); }
+.Teacher .box-container .box p{ font-size: 1.7rem; color: var(--light-color); margin-bottom: 1rem; }
+
+/* NEW: WhatsApp button */
+.Teacher .box-container .box .contact{ margin-top: .5rem; }
+.wa-btn{
+  display:inline-flex; align-items:center; gap:.6rem;
+  padding:.9rem 1.2rem; border-radius:.8rem;
+  background:#25D366; color:#fff; font-weight:600;
+  box-shadow:var(--box-shadow); transition:transform .12s ease, filter .12s ease;
+  text-decoration:none;
+}
+.wa-btn:hover{ transform: translateY(-1px); filter: brightness(0.95); }
+.wa-btn i{ font-size:1.8rem; line-height:1; }
+.Teacher{ background-color:#4545bb; }
+
+
+/* end */
+
+
+:root {
+    --black: #333;
+    --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+.Activities {
+    width: 100%; /* Full width coverage */
+    padding: 4rem 2rem;
+    background-color: #f9f9f9;
+    border-radius: 1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+.Activities .box-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Makes it responsive */
+    gap: 2rem;
+}
+
+
+.Activities .heading {
+    text-align: center;
+    font-size: 3.5rem;
+    margin-bottom: 3rem;
+    color: var(--pink);
+}
+
+.Activities .box-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Four columns */
+    gap: 2rem; /* Space between boxes */
+}
+
+.Activities .box-container .box {
+    background-color: #ffffff; /* White background for boxes */
+    border-radius: 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Activities .box-container .box:hover {
+    transform: translateY(-0.5rem); /* Slight hover effect */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Enhanced hover shadow */
+}
+
+.Activities .box-container .box img {
+    width: 100%; /* Full width image */
+    height: auto;
+    object-fit: contain;
+    border-radius: 0.5rem; /* Slight rounded edges */
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.Activities .box-container .box:hover img {
+    transform: scale(1.05); /* Slight zoom on hover */
+}
+
+.Activities .box-container .box h3 {
+    font-size: 1.8rem;
+    color: var(--black);
+    margin-top: 1rem;
+}
+
+
+/*gallery*/
+
+.Gallery{
+    background-size:cover;
+}
+.Gallery .Gallery-container{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(30rem,1fr));
+    gap: 2rem;
+
+}
+.Gallery .Gallery-container .box{
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+
+}
+
+.Gallery .Gallery-container .box img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+
+}
+
+.Gallery .Gallery-container .box:hover img{
+    transform: scale(1.2);
+}
+
+
+.Gallery .Gallery-container .box .icon{
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0; left: 0;
+    z-index: 10;
+    height: 100%;
+    width: 100%;
+    background: rgba(0, 0, 0, .4);
+    display: none;
+
+}
+.Gallery .Gallery-container .box .icon i{
+    font-size: 6rem;
+    color: var(--white);
+
+}
+
+.Gallery .Gallery-container .box:hover .icon{
+    display: flex;
+}
+.Gallery{
+    background-color: #e9768f;
+
+}
+
+/* Lightbox overlay */
+.lb{
+  position: fixed; inset: 0; display: none; /* hidden by default */
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,.9); z-index: 1000;
+}
+.lb.open{ display: flex; }
+.lb img{ max-width: 92vw; max-height: 88vh; }
+.lb-close{
+  position: absolute; top: 16px; right: 24px;
+  font-size: 36px; line-height: 1; color: #fff; background: transparent;
+  border: 0; cursor: pointer;
+}
+body.lg-on { overflow: hidden; }
+
+
+/*end*/
+
+/* Books Section */
+.Books {
+    padding: 40px 20px;
+    background-color: #f9fafb;
+}
+
+.Books h2 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #111827;
+    text-transform: uppercase;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.book-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;  /* Adjust alignment */
+    height: auto;                 /* Allow height to adjust automatically */
+}
+
+.book-card .book-name, .book-card .book-price {
+    flex-shrink: 0;
+}
+
+.book-card .btn {
+    margin-top: 15px; /* Adjusted margin between button and content */
+    padding: 12px 16px;  /* Smaller padding for a compact button */
+    font-size: 16px;      /* Adjusted font size */
+    background-color: #f39c9c;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    width: auto;         /* Allow the button width to adjust naturally */
+    max-width: 180px;    /* Limit the width for better control */
+    text-align: center;  /* Center the text inside the button */
+    transition: background-color 0.3s ease;
+}
+
+.book-card .btn:hover {
+    background-color: #e67b7b; /* Darker pink on hover */
+}
+
+.book-card:hover {
+    transform: translateY(-8px);
+}
+
+.book-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.book-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 15px 0 8px;
+}
+
+.book-price {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+
+
+
+
+
+/* End */
+
+
+
+/* Contact Section */
+.Contact {
+    padding: 4rem 2rem;
+    background-color: var(--light-gray); /* Background color */
+    text-align: center;
+}
+
+.Contact .heading {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+    color: var(--pink);
+}
+
+.Contact .icons-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr)); /* Responsive grid */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.Contact .icons {
+    padding: 2rem;
+    box-shadow: var(--box-shadow);
+    border-radius: 1rem;
+    text-align: center;
+    outline: 0.1rem solid rgba(0, 0, 0, 0.1);
+    outline-offset: -0.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Contact .icons:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.Contact .icons i {
+    font-size: 3rem;
+    color: var(--orange);
+    margin-bottom: 1rem;
+}
+
+.Contact .icons h3 {
+    font-size: 1.8rem;
+    color: var(--black);
+    margin-bottom: 0.5rem;
+}
+
+.Contact .icons p {
+    font-size: 1.2rem;
+    color: var(--gray);
+}
+
+.Contact .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.Contact .row .image {
+    flex: 1 1 30rem;
+    text-align: center;
+}
+
+.Contact .row .image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 1rem;
+}
+
+.Contact .row form {
+    flex: 1 1 40rem;
+    max-width: 100%;
+    padding: 2rem;
+    border: 0.1rem solid rgba(0, 0, 0, 0.2);
+    box-shadow: var(--box-shadow);
+    border-radius: 1rem;
+}
+
+.Contact .row form h3 {
+    font-size: 2.5rem;
+    padding-bottom: 1rem;
+    color: var(--black);
+    text-align: left;
+}
+
+.Contact .row form .inputBox {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.Contact .row form .inputBox input {
+    flex: 1 1 45%;
+    padding: 1rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    font-size: 1.6rem;
+    color: var(--gray);
+    transition: border-color 0.3s ease;
+}
+
+.Contact .row form .inputBox input:focus {
+    border: 3px solid var(--orange);
+    outline: none;
+}
+
+.Contact .row form textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius);
+    font-size: 1.6rem;
+    color: var(--gray);
+    margin-bottom: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.Contact .row form textarea:focus {
+    outline: none;
+    border: 3px solid var(--orange);
+}
+
+.Contact .row form .btn {
+    display: inline-block;
+    background-color: var(--orange);
+    color: #fff;
+    padding: 0.8rem 2rem;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.Contact .row form .btn:hover {
+    background-color: var(--pink);
+}
+
+/* Cart Section */
+.cart {
+    padding: 40px 20px;
+    background-color: #f4f4f9;  /* Light background color for the Cart section */
+    margin-top: 60px;
+}
+
+/* Cart Wrapper (Left and Right sides) */
+.cart-wrapper {
+    display: flex;
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Left Side: Cart Items */
+.cart-items {
+    flex: 2;
+    padding: 25px;
+    border-right: 1px solid #eee;
+}
+
+.cart-items h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #ff4da6; /* Pink title */
+}
+
+.empty-msg {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin-top: 50px;
+}
+
+/* Right Side: Summary */
+.cart-summary {
+    flex: 1;
+    padding: 25px;
+    background: linear-gradient(to bottom, #ffffff, #ffe4ec, #ffffff); /* White → Pink → White */
+    border-left: 1px solid #eee;
+}
+
+.cart-summary h3 {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #ff4da6; /* Pink */
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+    font-size: 16px;
+}
+
+.summary-label {
+    color: #666;
+}
+
+/* Style for the dropdown (Delivery Options) */
+select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin: 10px 0;
+    font-size: 16px; 
+    box-sizing: border-box; 
+}
+
+/* Checkout Button */
+.btn-checkout {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: #ff4da6; /* Pink button */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+
+.btn-checkout:hover {
+    background-color: #e03d8c; /* Darker pink hover */
+}
+
+/* Back Link Styling */
+.back-link {
+    display: inline-block;
+    margin-top: 20px;
+    text-decoration: none;
+    color: #ff4da6; /* Pink link */
+    font-weight: bold;
+}
+
+/* End */
+
+
+/* footer*/
+
+.footer {
+    background-color: var(--pink);
+    padding: 4rem 2rem;
+    text-align: center;
+    color: var(--white);
+}
+
+.footer .box-container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-bottom: 3rem;
+}
+
+.footer .box {
+    flex: 1 1 20rem; 
+    margin: 1rem;
+    padding: 1.5rem;
+    background-color: var(--white);
+    color: var(--black);
+    border-radius: 10px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.footer .box h3 {
+    font-size: 2rem;
+    color: var(--orange);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+}
+
+.footer .box p {
+    font-size: 1.4rem;
+    color: var(--light-color);
+    word-wrap: break-word; 
+    line-height: 1.8;
+    white-space: normal;  
+}
+
+
+
+.footer .box a {
+    display: block;
+    color: var(--black);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+    text-decoration: none;
+}
+
+.footer .box a:hover {
+    color: var(--orange);
+    text-decoration: underline;
+}
+
+.footer .box-container .box a i{
+    padding-right: .5rem;
+    color: var(--orange);
+}
+
+.footer .credit {
+    display: flex;
+    justify-content: center; /* center the content */
+    align-items: center;
+    gap: 0rem; /* space between text and button */
+    padding: 2rem;
+    font-size: 1.4rem;
+    background-color: var(--white);
+    color: var(--black);
+    text-align: center;
+}
+
+.footer .credit .admin-btn {
+    padding: 0.4rem 0.4rem;
+    color: var(--black);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.footer .credit .admin-btn:hover {
+    transform: translateY(-2px);
+    color: orange;
+}
+
+
+
+
+/*end*/
+
+body {
+    font-size: 1.4rem;
+}
+
+/*media query */
+ @media (max-width:991px){
+    html{
+        font-size: 55%;
+    }
+
+    .header{
+        padding: 2rem 3rem;
+    }
+
+    section{
+      padding: 3rem;  
+    }
+ }
+ @media (max-width: 768px) {
+
+    #menu-btn{
+        display: inline-block;
+    
+    }
+
+    body {
+        font-size: 1.6rem;
+    }
+
+    .header {
+        padding: 2rem 5%;
+    }
+    
+    .header .navbar{
+    position: absolute;
+    top: 110%;
+    right: 2rem;
+    width: 30rem;
+    background: var(--white);
+    border-radius: 1rem;
+    box-shadow: var(--box-shadow);
+    padding: 1rem 0;
+    z-index: 1001;
+    transform: translateX(120%);
+    transition: transform .35s ease;
+  }
+
+
+    .header .navbar.active{ transform: translateX(0); }
+
+    .header .navbar a{
+        font-size: 2rem;
+        margin: 2rem 2.5rem;
+        display: block;
+
+    }
+
+    .home .content {
+        font-size: 2.5rem; /* Smaller font size for mobile */
+        padding: 1rem; /* Adjust padding for smaller screens */
+    }
+
+    .home .content h3{
+        font-size:  2.5rem;
+        margin-bottom: 0.5rem;
+        margin-top: 5.5rem;
+
+    }
+
+    .enrollment .grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .enrollment .col-6,
+    .enrollment .col-12 {
+        grid-column: span 1;
+    }
+
+    select {
+        size: 25px;
+        font-size: 12px; 
+        padding: 8px;   
+    }
+
+}
+
+
+@media (max-width: 480px) {
+        .activities .box-container {
+            grid-template-columns: 1fr; /* Single column for phones */
+        }
+        
+        .home .content h3{
+        font-size: 3.5rem;
+        }
+    }
+
+
+    @media (max-width: 900px){
+  .logo .brand-extra{ display:none; }
+}
+
+
+@media (min-width: 1024px) {
+    .header {
+        padding: 2rem 9%;
+    }
+    }
+
+/* ===== MOBILE-FIRST LAYOUT SAFETY NET (place LAST) ===== */
+
+/* 0) Kill any horizontal overflow + grey edges on phones */
+html, body { max-width:100vw; overflow-x:hidden; }
+@media (max-width:480px){ body{ background:#fff !important; } }
+
+/* 1) Small, fixed gutters on phones */
+@media (max-width:480px){
+  section{ padding: 16px 12px !important; } /* overrides 3rem 7% */
+  .header{ padding: 12px !important; }
+  .home{ padding: 12px 0 !important; }
+  .home .content, .home .image{ flex:1 1 100% !important; }
+
+  /* mobile menu: no fixed 30rem, use viewport */
+  .header .navbar{
+    left:12px !important; right:12px !important; width:auto !important;
+  }
+}
+
+/* 2) Bring back your roomy spacing on tablets/desktops */
+@media (min-width:769px){
+  section{ padding: 3rem 7% !important; }
+  .header{ padding: 2rem 9% !important; }
+}
+
+/* 3) Media should never stretch the page */
+img, svg, video{ max-width:100%; height:auto; display:block; }
+
+/* 4) SVG wave should not push width */
+.custom-shape-divider-bottom{ width:100%; overflow:hidden; line-height:0; }
+.custom-shape-divider-bottom svg{ width:100%; height:auto; transform:rotateY(180deg); }
+
+
+/* === Fix: center + size teacher images === */
+.Teacher .box-container {
+  /* optional: helps grid children feel consistent */
+  align-items: stretch;
+  justify-items: center;
+}
+
+.Teacher .box-container .box{
+  display: flex;               /* center everything inside the card */
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.Teacher .box-container .box img{
+  display: block;              /* allow margin auto to work */
+  margin: 0 auto 1.2rem;       /* center horizontally */
+  width: 100%;
+  max-width: 280px;            /* consistent visual size */
+  height: auto;                /* keep aspect ratio */
+  aspect-ratio: 3 / 4;         /* graceful box shape across images */
+  object-fit: contain;         /* don’t crop; fit inside */
+  object-position: center;     /* keep subject centered */
+}
+
+/* (Optional) tighten on small screens */
+@media (max-width: 480px){
+  .Teacher .box-container .box img{
+    max-width: 220px;
+  }
+}
+
+.books-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.book-card img {
+  max-width: 100%;
+  height: auto;
+}
+
+.book-card .price {
+  font-size: 1.6rem;
+  margin: 0.5rem 0;
+}
