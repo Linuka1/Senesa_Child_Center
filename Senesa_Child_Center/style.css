@@ -11,6 +11,10 @@
     --font-size-base: 1.6rem;
     --high-contrast: #111;
 }
+:root {
+    --orange: #f9ba60;
+
+}
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 12px;
