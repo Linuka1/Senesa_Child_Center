@@ -1,0 +1,286 @@
+<?php require __DIR__ . '/auth-admin.php'; ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Change Password - Senesa Child Center</title>
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    .form-container {
+      max-width: 500px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .form-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+      color: #333;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #555;
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 12px;
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.2s ease;
+    }
+    .btn:hover {
+      background: #e55b5b;
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      padding: 10px 16px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #fff;
+      color: #555;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover {
+      border-color: #bbb;
+      color: #333;
+    }
+
+
+    .btn-back{font-size:14px;font-weight:500;color:#555;text-decoration:none;transition:color .2s}
+    .btn-back:hover{color:#ff6b6b}
+
+    .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid #ff6b6b;
+    color: #ff6b6b;
+    border-radius: 8px;
+    background: #fff;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-outline:hover {
+    background: #ff6b6b;
+    color: #fff;
+  }
+    
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2><i class="fas fa-school"></i> Senesa Child Center - Admin</h2>
+    <nav>
+      <a href="dashboard.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+      <a href="students.php"><i class="fas fa-user-graduate"></i> Enrollments</a>
+      <a href="teachers.php"><i class="fas fa-chalkboard-teacher"></i> Teachers</a>
+      <a href="programs.php"><i class="fas fa-book-open"></i> Programs</a>
+      <a href="gallery.php"><i class="fas fa-images"></i> Gallery</a>
+      <a href="books.php" ><i class="fas fa-book"></i> Books</a>
+      <a href="messages.php"><i class="fas fa-envelope"></i> Messages</a>
+      <a href="users.php"><i class="fas fa-users-cog"></i> Users</a>
+      <a href="orders.php"><i class="fas fa-receipt"></i> Orders</a>
+      <a href="settings.php"><i class="fas fa-cog"></i> Settings</a>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <header class="topbar">
+      <button class="sidebar-toggle"><i class="fas fa-bars"></i></button>
+      <h1>Change Password</h1>
+      <div class="admin-info dropdown">
+        <i class="fas fa-user-circle"></i> Admin <i class="fas fa-caret-down"></i>
+        <ul class="dropdown-menu">
+          <li><a href="profile.php">Profile</a></li>
+          <li><a href="change-password.php" class="active">Change Password</a></li>
+          <li><a href="#" id="logoutBtn">Logout</a></li>
+        </ul>
+      </div>
+      <!-- logoutModal -->
+      <div id="logoutModal" class="modal modal--confirm">
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <h3>Confirm Logout</h3>
+          <p>Are you sure you want to logout?</p>
+          <div class="modal-buttons">
+            <button id="confirmLogout" class="btn-danger">Yes, Logout</button>
+            <button id="cancelLogout" class="btn-secondary">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </header>
+
+    <section class="content">
+      <div class="form-container">
+        <div class="page-header">
+          <a href="#" id="backBtn" class="btn-outline back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+          </a>
+
+        </div>
+        <h2>Change Password</h2>
+        <form action="update-password.php" method="POST">
+          <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword" required>
+          </div>
+
+          <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" required>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" required>
+          </div>
+
+          <button type="submit" class="btn">Update Password</button>
+        </form>
+      </div>
+    </section>
+
+    <footer style="text-align:center; padding:15px; margin-top:auto; background:#fff; box-shadow:0 -2px 5px rgba(0,0,0,0.1);">
+      &copy; 2025 Senesa Child Center. All rights reserved.
+    </footer>
+  </main>
+
+  <!-- JavaScript (dropdown + sidebar toggle + logout) -->
+  <script>
+    // sidebar & dropdown & logout (shared)
+    const adminInfo    = document.querySelector('.admin-info');
+    const dropdownMenu = adminInfo?.querySelector('.dropdown-menu');
+    const logoutBtn    = document.getElementById('logoutBtn');
+    const logoutModal  = document.getElementById('logoutModal');
+    const closeLogout  = logoutModal?.querySelector('.close');
+    const confirmLogout= document.getElementById('confirmLogout');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const toggleBtn    = document.querySelector('.sidebar-toggle');
+    const sidebar      = document.querySelector('.sidebar');
+
+    // dropdown
+    adminInfo?.addEventListener('click', (e)=>{ e.stopPropagation(); dropdownMenu?.classList.toggle('show'); });
+    document.addEventListener('click', ()=> dropdownMenu?.classList.remove('show'));
+
+    // open modal + 🔒 lock body
+    logoutBtn?.addEventListener('click', (e)=>{
+      e.preventDefault();
+      if (!logoutModal) return;
+      logoutModal.style.display = 'flex';
+      dropdownMenu?.classList.remove('show');
+      document.body.classList.add('modal-open');   // lock scroll
+    });
+
+    // unified close + 🔓 unlock body
+    function closeLogoutModal(){
+      if (!logoutModal) return;
+      logoutModal.style.display = 'none';
+      document.body.classList.remove('modal-open'); // unlock scroll
+    }
+
+    closeLogout?.addEventListener('click', closeLogoutModal);
+    cancelLogout?.addEventListener('click', closeLogoutModal);
+    window.addEventListener('click', (e)=>{ if(e.target === logoutModal) closeLogoutModal(); });
+    // optional: ESC key
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && logoutModal?.style.display === 'flex') closeLogoutModal(); });
+
+    // confirm -> unlock then redirect
+    confirmLogout?.addEventListener('click', ()=>{
+      document.body.classList.remove('modal-open');
+      window.location.href = 'admin-login.html';
+    });
+
+    // sidebar toggle
+    toggleBtn?.addEventListener('click', ()=> sidebar?.classList.toggle('active'));
+
+  </script>
+
+  <script>
+      (function(){
+        // Account pages detector
+        const ACCOUNT_PAGES = [/profile\.html$/i, /change-password\.html$/i];
+        const hereUrl = location.href.split('#')[0];
+        const herePath = location.pathname;
+
+        const isAccount = (url) => ACCOUNT_PAGES.some(rx => rx.test(url || ''));
+
+        // 1) When user clicks into Profile / Change Password via dropdown:
+        //    Save the "origin" ONLY if we are coming from a NON-account page.
+        document.querySelectorAll('.dropdown-menu a[href]').forEach(a => {
+          a.addEventListener('click', () => {
+            const dest = a.getAttribute('href') || '';
+            if (isAccount(dest) && !isAccount(herePath)) {
+              sessionStorage.setItem('originPage', hereUrl);
+            }
+          });
+        });
+
+        // 2) Back button behavior on this page
+        const backBtn = document.getElementById('backBtn');
+        if (!backBtn) return;
+
+        backBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+
+          const origin = sessionStorage.getItem('originPage') || '';
+          const ref = document.referrer || '';
+
+          // If we have a stored origin (and it's not an account page), use it once and clear.
+          if (origin && !isAccount(origin) && origin !== hereUrl) {
+            sessionStorage.removeItem('originPage');  // leaving the account area
+            location.href = origin;
+            return;
+          }
+
+          // If we're ping-ponging between account pages, step back out of the pair.
+          if (ref && isAccount(ref)) {
+            history.go(-1); // go back one step; origin is preserved
+            return;
+          }
+
+          // Otherwise, try normal history; fallback to dashboard
+          if (history.length > 1 && ref) {
+            history.back();
+            return;
+          }
+
+          location.href = 'dashboard.html';
+        });
+      })();
+
+    </script>
+
+  </body>
+</html>
