@@ -5,18 +5,14 @@ header("Access-Control-Allow-Methods: GET, POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, X-Requested-With");
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { exit; }
 
-// --- DB connection ---
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "senesa_db";
+require_once __DIR__ . '/../db.php';   // must define $conn = new mysqli(...)
 
-$conn = new mysqli($host, $user, $pass, $db);
-if ($conn->connect_error) {
+if (!($conn instanceof mysqli)) {
   http_response_code(500);
-  echo json_encode(["ok"=>false,"error"=>"DB connection failed"]);
+  echo json_encode(['ok'=>false,'error'=>'DB connection not found']);
   exit;
 }
+$conn->set_charset('utf8mb4');
 
 /* =========================
    Portable upload paths  ✅
@@ -57,7 +53,7 @@ $action = $_REQUEST['action'] ?? 'list';
 
 /* Public endpoint: only Active items (for normal users page) */
 if ($action === 'public') {
-  $sql = "SELECT id, src, thumb, caption, status, created_at
+  $sql = "SELECT id, src, thumb, caption, status, created_at, eventName
           FROM gallery
           WHERE status='Active'
           ORDER BY id DESC";
@@ -80,38 +76,44 @@ if ($action === 'list') {
 
 /* Add */
 if ($action === 'add') {
-  $src     = $_POST['src'] ?? '';
-  $thumb   = $_POST['thumb'] ?? '';
-  $caption = $_POST['caption'] ?? '';
-  $status  = $_POST['status'] ?? 'Active';
+  $src       = $_POST['src'] ?? '';
+  $thumb     = $_POST['thumb'] ?? '';
+  $caption   = $_POST['caption'] ?? '';
+  $status    = $_POST['status'] ?? 'Active';
+  $eventName = trim($_POST['eventName'] ?? '');
 
   handle_upload_and_paths($src, $thumb, $UPLOAD_DIR_ABS, $UPLOAD_DIR_REL);
 
-  $stmt = $conn->prepare("INSERT INTO gallery (src, thumb, caption, status) VALUES (?,?,?,?)");
-  $stmt->bind_param("ssss", $src, $thumb, $caption, $status);
+  $stmt = $conn->prepare("INSERT INTO gallery (src, thumb, caption, status, eventName) VALUES (?,?,?,?,?)");
+  $stmt->bind_param("sssss", $src, $thumb, $caption, $status, $eventName);
+
   echo $stmt->execute()
     ? json_encode(["ok"=>true, "id"=>$conn->insert_id])
     : json_encode(["ok"=>false, "error"=>"Query execution failed: ".$stmt->error]);
   exit;
 }
 
+
 /* Edit */
 if ($action === 'edit') {
-  $id      = (int)($_POST['id'] ?? 0);
-  $src     = $_POST['src'] ?? '';
-  $thumb   = $_POST['thumb'] ?? '';
-  $caption = $_POST['caption'] ?? '';
-  $status  = $_POST['status'] ?? 'Active';
+  $id        = (int)($_POST['id'] ?? 0);
+  $src       = $_POST['src'] ?? '';
+  $thumb     = $_POST['thumb'] ?? '';
+  $caption   = $_POST['caption'] ?? '';
+  $status    = $_POST['status'] ?? 'Active';
+  $eventName = trim($_POST['eventName'] ?? '');
 
   handle_upload_and_paths($src, $thumb, $UPLOAD_DIR_ABS, $UPLOAD_DIR_REL);
 
-  $stmt = $conn->prepare("UPDATE gallery SET src=?, thumb=?, caption=?, status=? WHERE id=?");
-  $stmt->bind_param("ssssi", $src, $thumb, $caption, $status, $id);
+  $stmt = $conn->prepare("UPDATE gallery SET src=?, thumb=?, caption=?, status=?, eventName=? WHERE id=?");
+  $stmt->bind_param("sssssi", $src, $thumb, $caption, $status, $eventName, $id);
+
   echo $stmt->execute()
     ? json_encode(["ok"=>true, "updated"=>true])
     : json_encode(["ok"=>false, "error"=>"Query execution failed: ".$stmt->error]);
   exit;
 }
+
 
 /* Delete */
 if ($action === 'delete') {
