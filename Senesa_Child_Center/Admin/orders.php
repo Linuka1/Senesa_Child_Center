@@ -140,6 +140,7 @@
           </select>
           <button id="addBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Order</button>
           <button id="exportCsvBtn" class="btn-ghost"><i class="fas fa-file-export"></i> Export CSV</button>
+          <button id="exportPdfBtn" class="btn-ghost"><i class="fas fa-file-pdf"></i> Export PDF</button>
         </div>
       </div>
 
@@ -245,6 +246,11 @@
       </form>
     </div>
   </div>
+
+<!-- Load jsPDF + AutoTable-->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+
 
 <script>
 /* ==== shared UI (same behavior as other pages) ==== */
@@ -624,7 +630,181 @@ function exportCSV(){
   const a=document.createElement('a');
   a.href=URL.createObjectURL(blob); a.download='orders.csv'; a.click(); URL.revokeObjectURL(a.href);
 }
+
+
+/* ===== PDF helpers ===== */
+function addPdfFooter(doc){
+  const pages = doc.getNumberOfPages();
+  const w = doc.internal.pageSize.getWidth();
+  const h = doc.internal.pageSize.getHeight();
+  doc.setFontSize(9);
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);
+    doc.text(`Page ${i} of ${pages}`, w - 70, h - 16);
+  }
+}
+
+const pad2 = n => String(n).padStart(2,'0');
+const fmtYMD = (d) => (d instanceof Date && !isNaN(+d))
+  ? `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}` : '—';
+const nowStamp = ()=>{
+  const d = new Date();
+  return `${fmtYMD(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+};
+
+// match your table filter logic
+function getFilteredOrders(){
+  const q=(searchBox.value||'').toLowerCase();
+  const pf=payFilter.value;
+  const ff=fulFilter.value;
+  const fd=fromDate.value? new Date(fromDate.value) : null;
+  const td=toDate.value? new Date(toDate.value+'T23:59:59') : null;
+
+  return orders.filter(o=>{
+    const text=[o.orderId,o.buyer?.name,o.buyer?.email,o.paymentRef].filter(Boolean).join(' ').toLowerCase();
+    const matchQ = !q || text.includes(q);
+    const matchP = !pf || o.paymentStatus===pf;
+    const matchF = !ff || o.fulfillmentStatus===ff;
+    const dt = parseDate(o.createdAt);
+    const matchD = (!fd || dt>=fd) && (!td || dt<=td);
+    return matchQ && matchP && matchF && matchD;
+  });
+}
+
+function buildOrdersSummary(rows){
+  const total = rows.length;
+  const paid = rows.filter(o=>o.paymentStatus==='paid').length;
+  const pending = rows.filter(o=>o.paymentStatus==='pending').length;
+  const failed = rows.filter(o=>o.paymentStatus==='failed').length;
+  const fNew = rows.filter(o=>o.fulfillmentStatus==='new').length;
+  const fPacked = rows.filter(o=>o.fulfillmentStatus==='packed').length;
+  const fShipped = rows.filter(o=>o.fulfillmentStatus==='shipped').length;
+  const fComplete = rows.filter(o=>o.fulfillmentStatus==='complete').length;
+  const amountSum = rows.reduce((a,b)=>a+(Number(b.amount)||0),0);
+
+  const ds = rows.map(o=>parseDate(o.createdAt)).filter(d=>d instanceof Date && !isNaN(+d));
+  const fromDateStr = ds.length ? fmtYMD(new Date(Math.min(...ds))) : '—';
+  const toDateStr   = ds.length ? fmtYMD(new Date(Math.max(...ds))) : '—';
+
+  return { total, paid, pending, failed, fNew, fPacked, fShipped, fComplete, amountSum, fromDateStr, toDateStr };
+}
+
+/* ===== Export PDF ===== */
+document.getElementById('exportPdfBtn')?.addEventListener('click', ()=>{
+  const rows = getFilteredOrders();
+  const s = buildOrdersSummary(rows);
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit:'pt', format:'a4', orientation:'landscape' });
+  const margin = { left:40, right:40, top:60, bottom:30 };
+  const pageW = doc.internal.pageSize.getWidth();
+  const rightX = pageW - margin.right;
+
+  // Header
+  doc.setFontSize(16);
+  doc.text('Orders Report', margin.left, 34);
+  doc.setFontSize(10);
+  doc.text(`Generated: ${nowStamp()}`, margin.left, 50);
+  doc.text('Prepared by: Admin', margin.left, 64);
+
+  // Filters (right-aligned)
+  const searchTerm = (searchBox.value||'—');
+  const fFrom = fromDate.value || '—';
+  const fTo   = toDate.value   || '—';
+  const pay   = payFilter.value || 'All';
+  const ful   = fulFilter.value || 'All';
+  doc.setTextColor(120);
+  doc.text(`Filters: Search = ${searchTerm}`, rightX, 50, { align:'right' });
+  doc.text(`Dates: ${fFrom} to ${fTo}  ·  Pay = ${pay}  ·  Fulfillment = ${ful}`, rightX, 64, { align:'right' });
+  doc.setTextColor(0);
+  doc.setFont(undefined, 'italic');
+  doc.text('Senesa Child Center - Admin', rightX, 78, { align:'right' });
+  doc.setFont(undefined, 'normal');
+
+  // Summary table
+  const summaryRows = [
+    ['Total Orders', String(s.total)],
+    ['Paid', String(s.paid)],
+    ['Pending', String(s.pending)],
+    ['Failed', String(s.failed)],
+    ['Fulfillment: New / Packed / Shipped / Complete', `${s.fNew} / ${s.fPacked} / ${s.fShipped} / ${s.fComplete}`],
+    ['Total Amount', fmtLKR(s.amountSum)],
+  ];
+  if (s.fromDateStr !== '—' || s.toDateStr !== '—') {
+    summaryRows.push(['Created Date Range', `${s.fromDateStr} to ${s.toDateStr}`]);
+  }
+
+  doc.autoTable({
+    startY: 90,
+    theme: 'plain',
+    head: [['Summary','Value']],
+    body: summaryRows,
+    styles: { fontSize:10, cellPadding:5 },
+    headStyles: { fillColor:[255,107,107], textColor:[255,255,255], fontStyle:'bold' },
+    margin
+  });
+
+  // Detailed table
+  const head = [['Order ID','Date','Buyer','Email','Items','Amount','Payment','Fulfillment','Ref']];
+  const body = rows.map(o=>[
+    o.orderId,
+    (()=>{ const d = parseDate(o.createdAt); return `${fmtYMD(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`; })(),
+    o.buyer?.name || '—',
+    o.buyer?.email || '—',
+    (o.items||[]).map(it=>`${it.title} ×${it.qty}`).join(', '),
+    fmtLKR(o.amount),
+    o.paymentStatus,
+    o.fulfillmentStatus,
+    o.paymentRef || '—'
+  ]);
+
+  const avail = doc.internal.pageSize.getWidth() - margin.left - margin.right;
+
+  doc.autoTable({
+    head, body,
+    startY: doc.lastAutoTable.finalY + 14,
+    margin,
+    tableWidth: avail,
+    styles: { fontSize:9, cellPadding:3, overflow:'linebreak', valign:'top' },
+    headStyles: { fillColor:[60,60,60], textColor:[255,255,255], fontStyle:'bold' },
+    alternateRowStyles: { fillColor:[248,248,248] },
+    columnStyles: {
+      0:{ cellWidth: 64 },                 // Order ID
+      1:{ cellWidth: 88 },                 // Date
+      2:{ cellWidth: 88 },                 // Buyer
+      3:{ cellWidth: 122 },                // Email
+      4:{ cellWidth: 160 },                // Items
+      5:{ cellWidth: 72,  halign:'right' },   // Amount
+      6:{ cellWidth: 56,  halign:'center' },  // Payment
+      7:{ cellWidth: 64,  halign:'center' },  // Fulfillment
+      8:{ cellWidth: 46 }                  // Ref
+    },
+    didParseCell: (d)=>{
+      if (d.section==='body' && d.column.index===6){
+        const v = String(d.cell.raw||'').toLowerCase();
+        if (v==='paid'){ d.cell.styles.textColor=[46,125,50]; d.cell.styles.fontStyle='bold'; }
+        else if (v==='pending'){ d.cell.styles.textColor=[154,52,18]; d.cell.styles.fontStyle='bold'; }
+        else if (v==='failed'){ d.cell.styles.textColor=[153,27,27]; d.cell.styles.fontStyle='bold'; }
+      }
+      if (d.section==='body' && d.column.index===7){
+        const v = String(d.cell.raw||'').toLowerCase();
+        const map = { new:[7,89,133], packed:[55,48,163], shipped:[133,77,14], complete:[22,163,74] };
+        if (map[v]){ d.cell.styles.textColor = map[v]; d.cell.styles.fontStyle='bold'; }
+      }
+    },
+    didDrawPage: (data)=>{
+      doc.setFontSize(12);
+      doc.text('Detailed Records', margin.left, data.settings.startY - 8);
+    }
+  });
+
+  addPdfFooter(doc);
+  doc.save(`orders_${new Date().toISOString().slice(0,10)}.pdf`);
+});
+
 </script>
+
+
 
 
 </body>
