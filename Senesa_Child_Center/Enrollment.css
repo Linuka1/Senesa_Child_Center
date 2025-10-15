@@ -44,7 +44,6 @@
     outline: none;
     border: none;
     text-decoration: none;
-    text-transform: capitalize;
     transition: all .2s linear;
     
 }
@@ -235,7 +234,6 @@ section{
     padding: 1rem;
     font-size: 1.6rem;
     color: var(--black);
-    text-transform: capitalize;
 }
 
 .header .login-form p {

@@ -172,13 +172,16 @@
         <div class="grid">
           <div class="col-12">
             <label class="req">Choose Nursery Plan</label>
-             <div class="grid">
-                <label class="cardy col-6">
-                    <input type="radio" name="nursery-plan" value="only-nursery" id="only-nursery-btn" required> Only for Nursery
-                </label>
-                <label class="cardy col-6">
-                    <input type="radio" name="nursery-plan" value="nursery-and-daycare" id="nursery-and-daycare-btn"> Nursery and a Daycare plan
-                </label>
+            <div class="grid">
+              <label class="cardy col-6">
+                <input type="radio" name="nursery-plan" value="only-nursery" id="only-nursery-btn" required> Only for Nursery
+              </label>
+              <label class="cardy col-6">
+                <input type="radio" name="nursery-plan" value="nursery-and-daycare" id="nursery-and-daycare-btn"> Nursery and a Daycare plan
+              </label>
+              <label class="cardy col-6">
+                <input type="radio" name="nursery-plan" value="only-daycare" id="only-daycare-btn"> Only a Daycare plan (no nursery)
+              </label>
             </div>
           </div>
           <div class="col-12" id="daycare-plans-section" >
@@ -252,16 +255,6 @@
               <label class="cardy"><input type="checkbox" id="consentPhoto"> I allow my child’s photos to be used in updates.</label>
             </div>
             <div class="error">Please accept required consents.</div>
-          </div>
-          <div class="col-6">
-            <label class="req" for="signature">Parent e‑signature (type full name)</label>
-            <input id="signature" name="signature" required maxlength="80" placeholder="Full name" />
-            <div class="error">Signature required.</div>
-          </div>
-          <div class="col-6">
-            <label class="req" for="signDate">Date</label>
-            <input id="signDate" name="signDate" type="date" required />
-            <div class="error">Date required.</div>
           </div>
         </div>
       </fieldset>
@@ -342,295 +335,312 @@
 <!--footer section end-->
  
   <script>
-  (function(){
-    const form = document.getElementById('appForm');
-    const stepper = document.getElementById('stepper').children;
-    const steps = Array.from(form.querySelectorAll('fieldset[data-step]'));
-    const nextBtn = document.getElementById('nextBtn');
-    const prevBtn = document.getElementById('prevBtn');
-    const submitBtn = document.getElementById('submitBtn');
-    const saveBtn = document.getElementById('saveBtn');
-    const clearBtn = document.getElementById('clearBtn');
-    const printBtn = document.getElementById('printBtn');
-    const toast = document.getElementById('toast');
-    const review = document.getElementById('review');
-    const onlyNurseryBtn = document.getElementById('only-nursery-btn');
-    const nurseryAndDaycareBtn = document.getElementById('nursery-and-daycare-btn');
-    const daycarePlansSection = document.getElementById('daycare-plans-section');
+(function(){
+  const form = document.getElementById('appForm');
+  const stepper = document.getElementById('stepper').children;
+  const steps = Array.from(form.querySelectorAll('fieldset[data-step]'));
+  const nextBtn = document.getElementById('nextBtn');
+  const prevBtn = document.getElementById('prevBtn');
+  const submitBtn = document.getElementById('submitBtn');
+  const saveBtn = document.getElementById('saveBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const printBtn = document.getElementById('printBtn');
+  const toast = document.getElementById('toast');
+  const review = document.getElementById('review');
+  const onlyNurseryBtn = document.getElementById('only-nursery-btn');
+  const nurseryAndDaycareBtn = document.getElementById('nursery-and-daycare-btn');
+  const daycarePlansSection = document.getElementById('daycare-plans-section');
+  const daycarePlanRadios  = [...document.querySelectorAll('input[name="plan"]')];
+  const onlyDaycareBtn = document.getElementById('only-daycare-btn');
 
-    onlyNurseryBtn.onclick = () => {
-    // Disable all daycare plans when "Only for Nursery" is selected
-    daycarePlansSection.style.pointerEvents = 'none'; // Disable interaction with the daycare section
-    document.querySelectorAll('input[name="plan"]').forEach(plan => {
-        plan.disabled = true; // Disable all daycare plan options
-        plan.checked = false; // Uncheck any selected plan
-    });
-    };
-    
-    nurseryAndDaycareBtn.onclick = () => {
-    // Enable the daycare plans when "Nursery and Daycare Package" is selected
-    daycarePlansSection.style.pointerEvents = 'auto'; // Enable interaction with daycare section
-    document.querySelectorAll('input[name="plan"]').forEach(plan => {
-        plan.disabled = false; // Enable all daycare plan options
-    });
-    };
+  // Hide/show the daycare section based on nursery choice
+  function toggleDaycareSection() {
+    const nurChoice = document.querySelector('input[name="nursery-plan"]:checked')?.value;
 
-    document.querySelectorAll('input[name="plan"]').forEach(plan => {
-    plan.disabled = false;  // Enable the daycare options again
-    });
+    if (nurChoice === 'only-nursery') {
+      daycarePlansSection.style.display = 'none';
+      daycarePlansSection.setAttribute('aria-hidden', 'true');
 
-    const KEY = 'tinysteps_app_v1';
-    let current = 1;
-    const USE_BACKEND = false; // set to true and set form.action to your PHP endpoint later
-
-    // Helpers
-    const showToast = (msg)=>{toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1500)}
-    const showStep = (n) => {
-      current = n;
-
-      // toggle fieldsets
-      steps.forEach(fs => fs.hidden = fs.dataset.step != n);
-
-      // toggle stepper UI
-      Array.from(stepper).forEach((el,i) => el.classList.toggle('active', i+1<=n));
-
-      // buttons
-      const backHome  = document.getElementById('backHome');
-      const prevBtn   = document.getElementById('prevBtn');
-      const nextBtn   = document.getElementById('nextBtn');
-      const submitBtn = document.getElementById('submitBtn');
-
-      if (backHome) backHome.style.display = (n === 1 ? 'inline-flex' : 'none');
-      if (prevBtn)  prevBtn.style.display  = (n === 1 ? 'none'       : 'inline-flex');
-      if (nextBtn)  nextBtn.hidden         = (n === steps.length);
-      if (submitBtn) submitBtn.hidden      = (n !== steps.length);
-
-      if (n === steps.length) buildReview();
-
-      // scroll top for clarity
-      window.scrollTo({top:0, behavior:'smooth'});
-    }
-
-    const getFormData = ()=>{
-      const fd = new FormData(form);
-      const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(x=>x.value);
-      const payload = Object.fromEntries(fd.entries());
-      payload.extras = extras;
-      payload.plan = fd.get('plan');
-      payload['nursery-plan'] = fd.get('nursery-plan');
-      payload.timestamp = new Date().toISOString();
-      // compute age in months/years
-      const dob = payload.dob ? new Date(payload.dob) : null;
-      if(dob){
-        const diffMs = Date.now() - dob.getTime();
-        const ageYears = Math.floor(diffMs / (365.25*24*3600*1000));
-        payload.ageComputedYears = ageYears;
-      }
-      return payload;
-    }
-
-    const saveDraft = ()=>{ localStorage.setItem(KEY, JSON.stringify(getFormData())); showToast('Draft saved'); }
-    const loadDraft = ()=>{
-      const raw = localStorage.getItem(KEY); if(!raw) return;
-      const data = JSON.parse(raw);
-      for(const [k,v] of Object.entries(data)){
-        const el = form.elements[k];
-        if(!el) continue;
-        if(el instanceof RadioNodeList){
-          const radio = form.querySelector(`[name="${k}"][value="${CSS.escape(v)}"]`);
-          if(radio) radio.checked = true;
-        } else if(el.type === 'checkbox'){
-          el.checked = !!v;
-        } else {
-          el.value = v;
-        }
-      }
-      // extras
-      if(Array.isArray(data.extras)){
-        form.querySelectorAll('input[name="extras"]').forEach(cb=>{ cb.checked = data.extras.includes(cb.value); });
-      }
-      updateAge();
-    }
-
-    const clearDraft = ()=>{ localStorage.removeItem(KEY); form.reset(); updateAge(); showToast('Cleared'); showStep(1); }
-
-    // Validation per step
-    const validateStep = ()=>{
-      const fs = steps[current-1];
-      let ok = true;
-      fs.querySelectorAll('.show-error').forEach(el=>el.classList.remove('show-error'));
-      const requiredInputs = fs.querySelectorAll('[required]');
-      requiredInputs.forEach(input=>{
-        if (input.type === 'checkbox' && !input.checked) {
-          ok = false;
-          // put the error class on the wrapper that contains the .error block
-          (input.closest('.col-12') || input.closest('label.cardy'))?.classList.add('show-error');
-        }
-
-        else if(input.type==='radio'){
-          const name = input.name;
-          const groupChecked = form.querySelector(`input[name="${name}"]:checked`);
-          if(!groupChecked){ ok=false; input.closest('.col-12')?.classList.add('show-error'); }
-        }
-        else if(!input.checkValidity()){ ok=false; input.parentElement.classList.add('show-error'); }
+      // clear + disable daycare radios
+      daycarePlanRadios.forEach(r => {
+        r.checked = false;
+        r.disabled = true;
       });
-      
-      if (current === 3) {
-        const nurChoice = form.querySelector('input[name="nursery-plan"]:checked')?.value;
-        if (nurChoice === 'nursery-and-daycare' &&
-            !form.querySelector('input[name="plan"]:checked')) {
-          ok = false;
-          document.getElementById('daycare-plans-section')?.classList.add('show-error');
-        }
-      }
 
-      return ok;
+      daycarePlansSection.classList.remove('show-error');
+    } else if (nurChoice === 'nursery-and-daycare' || nurChoice === 'only-daycare') {
+      daycarePlansSection.style.display = '';
+      daycarePlansSection.removeAttribute('aria-hidden');
+
+      // enable daycare radios
+      daycarePlanRadios.forEach(r => { r.disabled = false; });
     }
-    form.addEventListener('change', (e) => {
-      if (e.target.name === 'plan' || e.target.name === 'nursery-plan') {
-        document.getElementById('daycare-plans-section')?.classList.remove('show-error');
-      }
-    });
+  }
 
-    form.addEventListener('input', (e) => {
-      const t = e.target;
-      if (t && t.closest('.show-error')) t.closest('.show-error').classList.remove('show-error');
-      if (t && t.checkValidity && t.parentElement) {
-        if (t.checkValidity()) t.parentElement.classList.remove('show-error');
-      }
-      saveDraft();
-    });
+  // listen for changes on ALL nursery-plan radios
+  onlyNurseryBtn.addEventListener('change', toggleDaycareSection);
+  nurseryAndDaycareBtn.addEventListener('change', toggleDaycareSection);
+  onlyDaycareBtn.addEventListener('change', toggleDaycareSection);
 
-    form.addEventListener('change', (e) => {
-      if (e.target.matches('input[type="checkbox"], input[type="radio"]')) {
-        (e.target.closest('.col-12') || e.target.closest('label.cardy'))?.classList.remove('show-error');
-      }
-    });
+  const KEY = 'tinysteps_app_v1';
+  let current = 1;
 
+  // ✅ Backend config
+  const USE_BACKEND = true;
+  const API_CREATE  = 'api/enrollment.php?action=create';
 
+  // Helpers
+  const showToast = (msg)=>{toast.textContent=msg; toast.classList.add('show'); setTimeout(()=>toast.classList.remove('show'),1500)}
+  const showStep = (n) => {
+    current = n;
 
+    // toggle fieldsets
+    steps.forEach(fs => fs.hidden = fs.dataset.step != n);
 
-    // Age calculator
-    const dobEl = form.elements['dob'];
-    const ageEl = form.elements['age'];
-    const updateAge = ()=>{
-      const v = dobEl.value; if(!v){ ageEl.value=''; return; }
-      const dob = new Date(v); const today = new Date();
-      let y = today.getFullYear() - dob.getFullYear();
-      const m = today.getMonth() - dob.getMonth();
-      const d = today.getDate() - dob.getDate();
-      if(m < 0 || (m===0 && d<0)) y--; // birthday not yet reached
-      ageEl.value = isFinite(y)? `${y} years` : '';
+    // toggle stepper UI
+    Array.from(stepper).forEach((el,i) => el.classList.toggle('active', i+1<=n));
+
+    // buttons
+    const backHome  = document.getElementById('backHome');
+    const prevBtn   = document.getElementById('prevBtn');
+    const nextBtn   = document.getElementById('nextBtn');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (backHome) backHome.style.display = (n === 1 ? 'inline-flex' : 'none');
+    if (prevBtn)  prevBtn.style.display  = (n === 1 ? 'none'       : 'inline-flex');
+    if (nextBtn)  nextBtn.hidden         = (n === steps.length);
+    if (submitBtn) submitBtn.hidden      = (n !== steps.length);
+
+    if (n === steps.length) buildReview();
+
+    // scroll top for clarity
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  const getFormData = ()=>{
+    const fd = new FormData(form);
+    const extras = Array.from(form.querySelectorAll('input[name="extras"]:checked')).map(x=>x.value);
+    const payload = Object.fromEntries(fd.entries());
+    payload.extras = extras;
+    payload.plan = fd.get('plan');
+    payload['nursery-plan'] = fd.get('nursery-plan');
+    payload.timestamp = new Date().toISOString();
+
+    // ✅ Include consent flags (checkboxes have id but no name, so FormData won’t include them)
+    payload.consentMedical = document.getElementById('consentMedical').checked;
+    payload.consentPolicy  = document.getElementById('consentPolicy').checked;
+    payload.consentPhoto   = document.getElementById('consentPhoto').checked;
+
+    // compute age in years (display)
+    const dob = payload.dob ? new Date(payload.dob) : null;
+    if(dob){
+      const diffMs = Date.now() - dob.getTime();
+      const ageYears = Math.floor(diffMs / (365.25*24*3600*1000));
+      payload.ageComputedYears = ageYears;
     }
-    dobEl.addEventListener('change', updateAge);
+    return payload;
+  }
 
-    // Review builder
-    function kv(key, val){
-      return `<div class="kv"><div><strong>${key}</strong></div><div>${val||'<em>—</em>'}</div></div>`;
-    }
-    const buildReview = ()=>{
-      const p = getFormData();
-      const nur = p['nursery-plan']; // from step 1
-      const nurLabel = nur === 'only-nursery'
-        ? 'Only Nursery'
-        : nur === 'nursery-and-daycare'
-          ? 'Nursery + Daycare'
-          : '—';
-
-      const selectedPlanText =
-        nur === 'only-nursery'
-          ? 'Only Nursery'
-          : nur === 'nursery-and-daycare'
-            ? `Nursery + ${p.plan || '—'}`
-            : '—';
-
-      review.innerHTML = `
-        <h3>Parent</h3>
-        ${kv('Name', `${p.parentFirst||''} ${p.parentLast||''}`)}
-        ${kv('Email', p.parentEmail)}
-        ${kv('Phone', p.parentPhone)}
-        ${kv('Address', `${p.address||''}, ${p.city||''}`)}
-        ${kv('Emergency Contact', `${p.emergencyName||''} ${p.emergencyPhone? '('+p.emergencyPhone+')':''}`)}
-
-        <h3>Child</h3>
-        ${kv('Name', `${p.childFirst||''} ${p.childLast||''}`)}
-        ${kv('DOB', p.dob)}
-        ${kv('Age', p.age || (p.ageComputedYears!=null? p.ageComputedYears+' years':''))}
-        ${kv('Gender', p.gender)}
-        ${kv('Allergies/Medical', p.allergies)}
-        ${kv('Special Needs', p.specialNeeds)}
-
-        <h3>Plan</h3>
-        ${kv('Nursery Choice', nurLabel)}
-        ${kv('Selected Plan', selectedPlanText)}
-        ${kv('Preferred Start', p.startDate)}
-        ${kv('Days/Week', p.daysPerWeek)}
-        ${kv('Schedule', p.schedule)}
-        ${kv('Extras', (p.extras||[]).join(', '))}
-
-        <h3>Emergency & Consents</h3>
-        ${kv('Physician', `${p.physician||''} ${p.physicianPhone? '('+p.physicianPhone+')':''}`)}
-        ${kv('Authorized Pickup', p.authorizedPickup)}
-        ${kv('Notes', p.notes)}
-        ${kv('Photo Consent', document.getElementById('consentPhoto').checked? 'Yes':'No')}
-        ${kv('Signature', `${p.signature||''} — ${p.signDate||''}`)}
-      `;
-    }
-
-    // Navigation
-    nextBtn.addEventListener('click', ()=>{
-      if(!validateStep()) return;
-      showStep(Math.min(current+1, steps.length));
-    });
-    prevBtn.addEventListener('click', ()=> showStep(Math.max(current-1,1)) );
-
-    // Save/Clear/Print
-    saveBtn.addEventListener('click', saveDraft);
-    clearBtn.addEventListener('click', clearDraft);
-    printBtn.addEventListener('click', ()=> window.print());
-
-    // Auto-save on change
-    form.addEventListener('input', ()=>{
-      // live validation visuals
-      const t = event.target;
-      if(t && t.closest('.show-error')) t.closest('.show-error').classList.remove('show-error');
-      if(t && t.checkValidity && t.parentElement) {
-        if(t.checkValidity()) t.parentElement.classList.remove('show-error');
-      }
-      saveDraft();
-    });
-
-    // Submit
-    form.addEventListener('submit', (e)=>{
-      e.preventDefault();
-      if(!validateStep()) return;
-      const payload = getFormData();
-      if(USE_BACKEND && form.action){
-        const hidden = document.createElement('input');
-        hidden.type='hidden'; hidden.name='payloadJSON'; hidden.value = JSON.stringify(payload);
-        form.appendChild(hidden);
-        form.submit();
+  const saveDraft = ()=>{ localStorage.setItem(KEY, JSON.stringify(getFormData())); showToast('Draft saved'); }
+  const loadDraft = ()=>{
+    const raw = localStorage.getItem(KEY); if(!raw) return;
+    const data = JSON.parse(raw);
+    for(const [k,v] of Object.entries(data)){
+      const el = form.elements[k];
+      if(!el) continue;
+      if(el instanceof RadioNodeList){
+        const radio = form.querySelector(`[name="${k}"][value="${CSS.escape(v)}"]`);
+        if(radio) radio.checked = true;
+      } else if(el.type === 'checkbox'){
+        el.checked = !!v;
       } else {
-        const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href=url; a.download=`tinysteps_application_${Date.now()}.json`;
-        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-        showToast('Application JSON downloaded');
+        el.value = v;
       }
+    }
+    // extras
+    if(Array.isArray(data.extras)){
+      form.querySelectorAll('input[name="extras"]').forEach(cb=>{ cb.checked = data.extras.includes(cb.value); });
+    }
+    updateAge();
+  }
+
+  const clearDraft = ()=>{ localStorage.removeItem(KEY); form.reset(); updateAge(); showToast('Cleared'); showStep(1); }
+
+  // Validation per step
+  const validateStep = ()=>{
+    const fs = steps[current-1];
+    let ok = true;
+    fs.querySelectorAll('.show-error').forEach(el=>el.classList.remove('show-error'));
+    const requiredInputs = fs.querySelectorAll('[required]');
+    requiredInputs.forEach(input=>{
+      if (input.type === 'checkbox' && !input.checked) {
+        ok = false;
+        (input.closest('.col-12') || input.closest('label.cardy'))?.classList.add('show-error');
+      }
+      else if(input.type==='radio'){
+        const name = input.name;
+        const groupChecked = form.querySelector(`input[name="${name}"]:checked`);
+        if(!groupChecked){ ok=false; input.closest('.col-12')?.classList.add('show-error'); }
+      }
+      else if(!input.checkValidity()){ ok=false; input.parentElement.classList.add('show-error'); }
     });
 
-    // Setup limits
-    const today = new Date().toISOString().slice(0,10);
-    form.elements['dob'].max = today;
-    form.elements['startDate'].min = today;
-    form.elements['signDate'].max = today;
+    if (current === 3) {
+      const nurChoice = form.querySelector('input[name="nursery-plan"]:checked')?.value;
+      if ((nurChoice === 'nursery-and-daycare' || nurChoice === 'only-daycare') &&
+          !form.querySelector('input[name="plan"]:checked')) {
+        ok = false;
+        document.getElementById('daycare-plans-section')?.classList.add('show-error');
+      }
+    }
+    return ok;
+  }
 
-    // Init
-    loadDraft();
-    showStep(1);
-    })();
-    </script>
+  form.addEventListener('change', (e) => {
+    if (e.target.name === 'plan' || e.target.name === 'nursery-plan') {
+      document.getElementById('daycare-plans-section')?.classList.remove('show-error');
+    }
+  });
+
+  form.addEventListener('input', (e) => {
+    const t = e.target;
+    if (t && t.closest('.show-error')) t.closest('.show-error').classList.remove('show-error');
+    if (t && t.checkValidity && t.parentElement) {
+      if (t.checkValidity()) t.parentElement.classList.remove('show-error');
+    }
+    saveDraft();
+  });
+
+  form.addEventListener('change', (e) => {
+    if (e.target.matches('input[type="checkbox"], input[type="radio"]')) {
+      (e.target.closest('.col-12') || e.target.closest('label.cardy'))?.classList.remove('show-error');
+    }
+  });
+
+  // Age calculator
+  const dobEl = form.elements['dob'];
+  const ageEl = form.elements['age'];
+  const updateAge = ()=>{
+    const v = dobEl.value; if(!v){ ageEl.value=''; return; }
+    const dob = new Date(v); const today = new Date();
+    let y = today.getFullYear() - dob.getFullYear();
+    const m = today.getMonth() - dob.getMonth();
+    const d = today.getDate() - dob.getDate();
+    if(m < 0 || (m===0 && d<0)) y--; // birthday not yet reached
+    ageEl.value = isFinite(y)? `${y} years` : '';
+  }
+  dobEl.addEventListener('change', updateAge);
+
+  // Review builder
+  function kv(key, val){
+    return `<div class="kv"><div><strong>${key}</strong></div><div>${val||'<em>—</em>'}</div></div>`;
+  }
+  const buildReview = ()=>{
+    const p = getFormData();
+    const nur = p['nursery-plan'];
+    const nurLabel =
+      nur === 'only-nursery' ? 'Nursery Only' :
+      nur === 'nursery-and-daycare' ? 'Nursery + Daycare' :
+      nur === 'only-daycare' ? 'Daycare Only' : '—';
+
+    const selectedPlanText =
+      nur === 'only-nursery' ? 'Nursery Only' :
+      nur === 'nursery-and-daycare' ? `Nursery + ${p.plan || '—'}` :
+      nur === 'only-daycare' ? (p.plan || '—') : '—';
+
+    review.innerHTML = `
+      <h3>Parent</h3>
+      ${kv('Name', `${p.parentFirst||''} ${p.parentLast||''}`)}
+      ${kv('Email', p.parentEmail)}
+      ${kv('Phone', p.parentPhone)}
+      ${kv('Address', `${p.address||''}, ${p.city||''}`)}
+      ${kv('Emergency Contact', `${p.emergencyName||''} ${p.emergencyPhone? '('+p.emergencyPhone+')':''}`)}
+
+      <h3>Child</h3>
+      ${kv('Name', `${p.childFirst||''} ${p.childLast||''}`)}
+      ${kv('DOB', p.dob)}
+      ${kv('Age', p.age || (p.ageComputedYears!=null? p.ageComputedYears+' years':''))}
+      ${kv('Gender', p.gender)}
+      ${kv('Allergies/Medical', p.allergies)}
+      ${kv('Special Needs', p.specialNeeds)}
+
+      <h3>Plan</h3>
+      ${kv('Nursery Choice', nurLabel)}
+      ${kv('Selected Plan', selectedPlanText)}
+      ${kv('Preferred Start', p.startDate)}
+      ${kv('Days/Week', p.daysPerWeek)}
+      ${kv('Schedule', p.schedule)}
+      ${kv('Extras', (p.extras||[]).join(', '))}
+
+      <h3>Emergency & Consents</h3>
+      ${kv('Physician', `${p.physician||''} ${p.physicianPhone? '('+p.physicianPhone+')':''}`)}
+      ${kv('Authorized Pickup', p.authorizedPickup)}
+      ${kv('Notes', p.notes)}
+      ${kv('Photo Consent', document.getElementById('consentPhoto').checked? 'Yes':'No')}
+    `;
+  }
+
+  // Navigation
+  nextBtn.addEventListener('click', ()=>{
+    if(!validateStep()) return;
+    showStep(Math.min(current+1, steps.length));
+  });
+  prevBtn.addEventListener('click', ()=> showStep(Math.max(current-1,1)) );
+
+  // Save/Clear/Print
+  saveBtn.addEventListener('click', saveDraft);
+  clearBtn.addEventListener('click', clearDraft);
+  printBtn.addEventListener('click', ()=> window.print());
+
+  // Submit (POST to backend)
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    if(!validateStep()) return;
+
+    const payload = getFormData();
+
+    if (USE_BACKEND) {
+      try {
+        const res = await fetch(API_CREATE, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(payload)
+        });
+        const out = await res.json();
+        if (out.ok) {
+          showToast('Application submitted ✅');
+          localStorage.removeItem(KEY);
+          form.reset();
+          toggleDaycareSection();
+          showStep(1);
+        } else {
+          alert('Save failed: ' + (out.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Network/Server error: ' + err.message);
+      }
+    } else {
+      const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download=`tinysteps_application_${Date.now()}.json`;
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+      showToast('Application JSON downloaded');
+    }
+  });
+
+  // Setup limits
+  const today = new Date().toISOString().slice(0,10);
+  form.elements['dob'].max = today;
+  form.elements['startDate'].min = today;
+
+  // Init
+  loadDraft();
+  toggleDaycareSection();
+  showStep(1);
+})();
+</script>
+
 
   </body>
 </html>

@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #fff;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    header {
+      background: linear-gradient(90deg, #ff66b2, #ff3385);
+      color: white;
+      padding: 20px 30px;
+      font-size: 22px;
+      font-weight: bold;
+      text-align: center;
+      letter-spacing: 1px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 30px;
+    }
+
+    .checkout-steps { width: 68%; }
+
+    .step {
+      background: white;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(255, 102, 178, 0.25);
+      border-left: 6px solid #ff4da6;
+      transition: transform 0.2s;
+    }
+    .step:hover { transform: translateY(-3px); }
+
+    .step h2 {
+      font-size: 20px;
+      margin-bottom: 18px;
+      color: #ff3385;
+    }
+
+    label {
+      display: block;
+      margin: 8px 0 4px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 14px;
+      border: 1px solid #ffcce0;
+      border-radius: 8px;
+      background: #fff0f7;
+      outline: none;
+      transition: 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: #ff4da6;
+      box-shadow: 0 0 6px rgba(255, 77, 166, 0.5);
+    }
+
+    .radio-group label {
+      display: block;
+      background: #fff0f7;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 1px solid #ffcce0;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .radio-group input { margin-right: 10px; }
+    .radio-group label:hover { background: #ffe6f2; border-color: #ff4da6; }
+
+    .btn {
+      background: linear-gradient(90deg, #ff4da6, #ff3385);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      width: 100%;
+      transition: 0.3s;
+    }
+    .btn:hover { background: linear-gradient(90deg, #ff3385, #ff1a75); transform: scale(1.02); }
+
+    .summary {
+      width: 30%;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(255, 102, 178, 0.25);
+      height: fit-content;
+    }
+    .summary h3 {
+      color: #ff3385;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #ffe6f2;
+      padding-bottom: 10px;
+    }
+    .cart-item { border-bottom: 1px solid #ffe6f2; padding: 12px 0; }
+    .cart-item:last-child { border-bottom: none; }
+    .total {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #ff1a75;
+      text-align: right;
+    }
+
+    /* Modal (Card Payment Popup) */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal.show { display: flex; }
+
+    .modal-content {
+      background: white;
+      padding: 25px;
+      border-radius: 12px;
+      width: 400px;
+      box-shadow: 0 5px 15px rgba(255, 77, 166, 0.4);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    .modal h3 { margin-bottom: 15px; color: #ff3385; }
+    .close { float: right; font-size: 20px; cursor: pointer; color: #ff3385; }
+    .close:hover { color: #ff1a75; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Side by side Step 2 & 3 */
+    .row { display: flex; gap: 20px; }
+    .row .step { flex: 1; margin-bottom: 0; }
+  </style>
+</head>
+<body>
+
+<header>Checkout</header>
+
+<div class="container">
+
+  <!-- Checkout steps -->
+  <div class="checkout-steps">
+
+    <!-- Step 1: Shipping address -->
+    <div class="step">
+      <h2>1. Shipping Address</h2>
+      <form>
+        <label>First Name *</label>
+        <input type="text" required>
+
+        <label>Last Name *</label>
+        <input type="text" required>
+
+        <label>Address 1 *</label>
+        <input type="text" required>
+
+        <label>Address 2</label>
+        <input type="text">
+
+        <label>City *</label>
+        <input type="text" required>
+
+        <label>ZIP Code *</label>
+        <input type="text" required>
+
+        <label>Contact no *</label>
+        <input type="text" required>
+      </form>
+    </div>
+
+    <!-- Step 2 & 3 in one row -->
+    <div class="row">
+      <!-- Step 2: Shipping method -->
+      <div class="step">
+        <h2>2. Delivery Method</h2>
+        <div class="radio-group">
+          <label><input type="radio" name="shipping" checked> Standard - 250.00</label>
+          <label><input type="radio" name="shipping"> Express - 400.00</label>
+        </div>
+      </div>
+
+      <!-- Step 3: Payment -->
+      <div class="step">
+        <h2>3. Payment</h2>
+        <div class="radio-group">
+          <label><input type="radio" name="payment" value="cash" checked> Cash</label>
+          <label><input type="radio" name="payment" value="card"> Card</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 4: Review -->
+    <div class="step">
+      <h2>4. Review & Place Order</h2>
+      <button class="btn">Place Order</button>
+    </div>
+
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <h3>Order Summary</h3>
+    <div class="cart-item"><p>Your cart is empty</p></div>
+    <p class="total">Total: </p>
+  </div>
+
+</div>
+
+<!-- Modal for Card Payment -->
+<div id="cardModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="cardClose">&times;</span>
+    <h3>Card Payment Details</h3>
+    <form id="cardForm">
+      <label>Card Number</label>
+      <input type="text" maxlength="16" placeholder="1234 5678 9012 3456" required>
+
+      <label>Name on Card</label>
+      <input type="text" placeholder="John Doe" required>
+
+      <label>Bank</label>
+      <input type="text" placeholder="Bank Name" required>
+
+      <label>Expiry Date</label>
+      <input type="month" required>
+
+      <label>CVV</label>
+      <input type="password" maxlength="3" placeholder="123" required>
+
+      <button type="submit" class="btn" style="margin-top:15px;">Confirm Payment</button>
+    </form>
+  </div>
+</div>
+
+<script>
+/* ===== Settings ===== */
+const CART_KEY = 'senesa_cart_v1';
+const DELIVERY_KEY = 'senesa_delivery_choice'; // saved on main page (optional)
+
+/* ===== Elements ===== */
+const shippingRadios = document.querySelectorAll('input[name="shipping"]');
+const cardOption     = document.querySelector('input[value="card"]');
+const cashOption     = document.querySelector('input[value="cash"]');
+const modal          = document.getElementById('cardModal');
+const cardClose      = document.getElementById('cardClose');
+const cardForm       = document.getElementById('cardForm');
+const placeBtn       = document.querySelector('.checkout-steps .btn');
+const itemsWrap      = document.querySelector('.summary .cart-item');
+const totalEl        = document.querySelector('.summary .total');
+
+/* ===== Helpers ===== */
+function getCart(){
+  try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
+  catch { return []; }
+}
+function fmtLKR(n){ return 'Rs. ' + Number(n||0).toLocaleString('en-LK'); }
+function shippingFee(){
+  const v = document.querySelector('input[name="shipping"]:checked')?.parentElement?.textContent || '';
+  return v.includes('Express') ? 400 : 250;
+}
+
+/* ===== Guard: if empty cart, bounce to main ===== */
+(function guardEmpty(){
+  const items = getCart();
+  if (!items.length) window.location.replace('index.html');
+})();
+
+/* ===== Prefill delivery choice (optional) ===== */
+(function preselectDelivery(){
+  const saved = localStorage.getItem(DELIVERY_KEY) || '';
+  if (!saved) return;
+  const isExpress = /Express/i.test(saved);
+  const rads = Array.from(shippingRadios);
+  const target = isExpress
+    ? rads.find(r => r.parentElement.textContent.includes('Express'))
+    : rads.find(r => r.parentElement.textContent.includes('Standard'));
+  if (target) target.checked = true;
+})();
+
+/* ===== Render Order Summary ===== */
+function renderSummary(){
+  const items = getCart();
+  if (!items.length){
+    itemsWrap.innerHTML = '<p>Your cart is empty</p>';
+    totalEl.textContent = 'Total: ' + fmtLKR(0);
+    return;
+  }
+  itemsWrap.innerHTML = items.map(it => `
+    <div class="cart-item" style="display:flex;justify-content:space-between;gap:12px">
+      <span>${it.title} × ${it.qty}</span>
+      <b>${fmtLKR(it.unit_price * it.qty)}</b>
+    </div>
+  `).join('');
+  const sub = items.reduce((s,it)=> s + it.unit_price*it.qty, 0);
+  totalEl.textContent = 'Total: ' + fmtLKR(sub + shippingFee());
+}
+shippingRadios.forEach(r => r.addEventListener('change', renderSummary));
+
+/* ===== Payment modal UX ===== */
+let CARD_CONFIRMED = false; // set true when card form is submitted
+
+function openModal(){ modal.classList.add('show'); document.body.style.overflow='hidden'; }
+function closeModal(){ modal.classList.remove('show'); document.body.style.overflow=''; }
+
+cardOption.addEventListener('change', ()=> { if(cardOption.checked) openModal(); });
+cashOption.addEventListener('change',  ()=> { if(cashOption.checked) closeModal(); });
+cardClose.addEventListener('click', closeModal);
+
+window.addEventListener('click', (e)=> {
+  if (e.target === modal){ closeModal(); cashOption.checked = true; }
+});
+window.addEventListener('keydown', (e)=> {
+  if (e.key === 'Escape' && modal.classList.contains('show')){ closeModal(); cashOption.checked = true; }
+});
+cardForm.addEventListener('submit', (e)=> {
+  e.preventDefault(); // simulate success; integrate real gateway later
+  CARD_CONFIRMED = true;
+  closeModal();
+});
+
+/* ===== Shipping form getters ===== */
+function getShipping(){
+  const form = document.querySelector('.checkout-steps .step form');
+  const fields = form.querySelectorAll('input');
+  const [firstName,lastName,addr1,addr2,city,zip,phone] = fields;
+  return {
+    firstName:firstName.value.trim(),
+    lastName:lastName.value.trim(),
+    address1:addr1.value.trim(),
+    address2:addr2.value.trim(),
+    city:city.value.trim(),
+    zip:zip.value.trim(),
+    phone:phone.value.trim()
+  };
+}
+function validShipping(s){
+  return s.firstName && s.lastName && s.address1 && s.city && s.zip && s.phone;
+}
+
+/* ===== Auth: session check & prefill ===== */
+async function authMe(){
+  try{
+    const r = await fetch('api/auth.php?action=me', { credentials:'same-origin' });
+    return await r.json();
+  }catch(_){ return { ok:false }; }
+}
+
+/* ===== Create order via API ===== */
+async function createOrder(payload){
+  const r = await fetch('api/orders.php?action=create', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload)
+  });
+  const text = await r.text();
+  let j; try{ j = JSON.parse(text); }catch(_){ throw new Error('Server did not return JSON:\n' + text); }
+  if (!j.ok) throw new Error(j.error || 'Order creation failed');
+  return j;
+}
+
+/* ===== Place Order ===== */
+placeBtn.addEventListener('click', async (e) => {
+  e.preventDefault();
+
+  const cartItems = getCart();
+  if (!cartItems.length){ alert('Your cart is empty.'); return; }
+
+  const me = await authMe();
+  if (!me.ok || !me.loggedIn){ alert('Please log in first.'); return; }
+
+  const ship = getShipping();
+  if (!validShipping(ship)){ alert('Please complete all required shipping fields.'); return; }
+
+  const subTotal = cartItems.reduce((s,it)=> s + it.unit_price*it.qty, 0);
+  const delivery = shippingFee();
+  const payMethod = document.querySelector('input[name="payment"]:checked')?.value || 'cash';
+
+  // Only mark "Paid" if Card is selected and confirmed
+  const paymentStatus = (payMethod === 'card' && CARD_CONFIRMED) ? 'paid' : 'pending';
+
+  // Keep delivery + address in notes (your PHP stores it)
+  const notesLines = [
+    `Delivery: ${delivery === 400 ? 'Express' : 'Standard'} (${fmtLKR(delivery)})`,
+    `ShipTo: ${ship.firstName} ${ship.lastName}, ${ship.address1}` +
+      (ship.address2 ? `, ${ship.address2}` : '') +
+      `, ${ship.city}, ${ship.zip}. Phone: ${ship.phone}`,
+    `ClientTotalShown: ${fmtLKR(subTotal + delivery)} (DB total excludes delivery)`
+  ];
+  const notes = notesLines.join(' | ');
+
+  const payload = {
+    orderId: '',                           // server generates order_code if empty
+    createdAt: new Date().toISOString(),
+    buyer: {
+      name: (me.user?.name || (ship.firstName + ' ' + ship.lastName)).trim(),
+      email: me.user?.email || ''
+    },
+    items: cartItems.map(x => ({
+      bookId: x.product_id,
+      qty: x.qty,
+      unitPrice: x.unit_price,
+      title: x.title
+    })),
+    paymentStatus,                         // mapped to 'Paid'/'Pending' server-side
+    fulfillmentStatus: 'new',
+    paymentRef: (paymentStatus === 'paid')
+                  ? ('PG_' + Math.random().toString(36).slice(2,10).toUpperCase())
+                  : '',
+    notes
+  };
+
+  try{
+    const resp = await createOrder(payload);   // { ok:true, order_id, order_code, total }
+
+    // Clear local state
+    localStorage.removeItem(CART_KEY);
+    localStorage.removeItem(DELIVERY_KEY);
+
+    // Pass order code to main page for a one-time toast
+    sessionStorage.setItem('last_order_code', resp.order_code || '');
+
+    // Redirect to main page
+    window.location.replace('code1.html'); // change if your home path differs
+  }catch(err){
+    console.error(err);
+    alert('Could not place order: ' + err.message);
+  }
+});
+
+/* ===== Boot ===== */
+(async function init(){
+  renderSummary();
+
+  // Prefill first name if session has it
+  const me = await authMe();
+  if (me.ok && me.loggedIn && me.user?.name){
+    const [firstName] = me.user.name.split(' ');
+    const firstInput = document.querySelector('.checkout-steps .step form input[type="text"]');
+    if (firstInput && firstName) firstInput.value = firstName;
+  }
+})();
+</script>
+
+</body>
+</html>

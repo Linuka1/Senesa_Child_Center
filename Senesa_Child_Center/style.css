@@ -45,7 +45,6 @@
     outline: none;
     border: none;
     text-decoration: none;
-    text-transform: capitalize;
     transition: all .2s linear;
     
 }
@@ -227,7 +226,6 @@ section{
     padding: 1rem;
     font-size: 1.6rem;
     color: var(--black);
-    text-transform: capitalize;
 }
 
 .header .login-form p {
@@ -265,6 +263,12 @@ section{
 .header .login-form .register-section {
     padding: 2rem;
 }
+
+/* prevent styling from capitalizing */
+input[type="email"], input[type="text"], input[type="password"] {
+  text-transform: none !important;
+}
+
 
 /* Home Section */
 .home {
@@ -527,8 +531,6 @@ body, html {
     transform: scale(1.05); /* Zoom effect on hover */
 }
 
-
-
 /* teacher */
 .teacher{
   background: #0000ff no-repeat;
@@ -714,6 +716,50 @@ body {
   border: 0; cursor: pointer;
 }
 body.lg-on { overflow: hidden; }
+
+
+/* === Event Albums (public gallery) === */
+.Gallery .event-albums{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+  gap:16px;
+}
+.Gallery .event-card{
+  background:#fff;
+  border:1px solid #eee;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 2px 6px rgba(0,0,0,.06);
+  cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.Gallery .event-card:hover{
+  transform:translateY(-2px);
+  box-shadow:0 6px 14px rgba(0,0,0,.10);
+}
+.Gallery .event-card img{
+  width:100%;
+  height:140px;
+  object-fit:cover;
+  display:block;
+}
+.Gallery .event-card .meta{
+  padding:10px 12px;
+}
+.Gallery .event-card .meta h4{
+  margin:0 0 4px;
+  font-size:16px;
+  color:#333;
+}
+.Gallery .event-card .meta p{
+  margin:0;
+  color:#6b7280;
+  font-size:13px;
+}
+/* Optional: let albums own the layout instead of the old image grid */
+@media (min-width:0){
+  .Gallery .Gallery-container{ display:block; }
+}
 
 
 /*end*/
@@ -949,6 +995,10 @@ body.lg-on { overflow: hidden; }
 }
 
 /* Cart Section */
+
+.cart-row > div { overflow: visible !important; }
+
+
 .cart {
     padding: 40px 20px;
     background-color: #f4f4f9;  /* Light background color for the Cart section */
@@ -1048,6 +1098,43 @@ select {
     text-decoration: none;
     color: #ff4da6; /* Pink link */
     font-weight: bold;
+}
+
+/* Cart row as a grid so columns never squeeze each other */
+.cart-row{
+  display:grid;
+  grid-template-columns: 1fr 150px 180px 150px; /* title | unit | controls | total */
+  align-items:center;
+  gap:12px;
+  padding:10px 0;
+  border-bottom:1px solid #eee;
+}
+.cart-row .unit,
+.cart-row .total{
+  text-align:right;
+  white-space:nowrap;
+}
+.cart-row .controls{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+}
+.cart-row .controls .qty{
+  width:70px;
+  padding:6px 8px;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
+.cart-row .controls .remove{
+  background:#fee2e2;
+  border:none;
+  border-radius:8px;
+  padding:6px 10px;
+  cursor:pointer;
+}
+
+.cart-row{
+  grid-template-columns: 1fr 120px 180px 120px; /* title | unit | controls | total */
 }
 
 /* End */
@@ -1229,6 +1316,42 @@ body {
         padding: 8px;   
     }
 
+}
+
+/* Stack the cart row nicely on small screens */
+@media (max-width: 560px){
+  .cart-wrapper{
+    flex-direction: column;              /* summary under items */
+  }
+  .cart-items{ 
+    border-right: none; 
+    border-bottom: 1px solid #eee; 
+  }
+  .cart-summary{ 
+    border-left: none; 
+  }
+
+  .cart-row{
+    grid-template-columns: 1fr 1fr;      /* two columns */
+    grid-template-areas:
+      "title   title"
+      "unit    controls"
+      "total   total";
+    gap: 8px 10px;
+  }
+
+  .cart-row .title   { grid-area: title; }
+  .cart-row .unit    { grid-area: unit; text-align: left;  white-space: nowrap; }
+  .cart-row .controls{ grid-area: controls; justify-content: flex-end; }
+  .cart-row .total   { grid-area: total; text-align: right; white-space: nowrap; }
+
+  /* smaller controls on phones */
+  .cart-row .controls .qty{
+    width: 56px;
+  }
+  .cart-row .controls .remove{
+    padding: 6px 10px;
+  }
 }
 
 
