@@ -176,6 +176,9 @@
           <button id="importBtn" class="btn-ghost"><i class="fas fa-file-import"></i> Import JSON</button>
           <input id="importInput" type="file" accept="application/json" style="display:none" />
           <button id="exportCsvBtn" class="btn-ghost"><i class="fas fa-file-export"></i> Export CSV</button>
+          <button id="exportPdfBtn" class="btn-ghost">
+            <i class="fas fa-file-pdf"></i> Export PDF
+          </button>
         </div>
       </div>
 
@@ -229,6 +232,10 @@
       </form>
     </div>
   </div>
+
+<!-- Load jsPDF + AutoTable -->  
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 
 <script>
 /* shared UI */
@@ -475,6 +482,174 @@ document.getElementById('exportCsvBtn').addEventListener('click',()=>{
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}); const a=document.createElement('a');
   a.href=URL.createObjectURL(blob); a.download='books.csv'; a.click(); URL.revokeObjectURL(a.href);
 });
+
+/* ===== PDF footer helper ===== */
+function addFooter(doc){
+  const pages = doc.getNumberOfPages();
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);
+    const w = doc.internal.pageSize.getWidth();
+    const h = doc.internal.pageSize.getHeight();
+    doc.setFontSize(9);
+    doc.text(`Page ${i} of ${pages}`, w - 70, h - 16);
+  }
+}
+
+/* ===== Books → Export PDF ===== */
+(function(){
+  const btn = document.getElementById('exportPdfBtn');
+  if(!btn) return;
+
+  const pad2 = n => String(n).padStart(2,'0');
+  const fmtDate = (d)=> (!d || isNaN(+d)) ? '—'
+     : `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  const parseYMD = (s)=>{
+    if(!s) return null;
+    const m = String(s).trim().match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(!m) return null;
+    const d = new Date(+m[1], +m[2]-1, +m[3]);
+    return isNaN(+d) ? null : d;
+  };
+  const nowStamp = ()=>{
+    const d = new Date();
+    return `${fmtDate(d)} ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  };
+  const money = v => (v==null || isNaN(v)) ? '—'
+     : 'Rs. ' + Number(v).toLocaleString('en-LK', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function buildSummary(rows){
+    const total = rows.length;
+    const inStock = rows.filter(r => r.status === 'In Stock').length;
+    const oos     = rows.filter(r => r.status === 'Out of Stock').length;
+    const hidden  = rows.filter(r => r.status === 'Hidden').length;
+
+    const totalUnits = rows.reduce((s,r)=> s + (Number(r.stock)||0), 0);
+    const inventoryValue = rows.reduce((s,r)=>{
+      const p = Number(r.price); const q = Number(r.stock);
+      return s + (isNaN(p)||isNaN(q) ? 0 : p*q);
+    }, 0);
+
+    const dates = rows.map(r => parseYMD(r.created_at || r.createdAt)).filter(Boolean);
+    const fromDate = dates.length ? fmtDate(new Date(Math.min(...dates))) : '—';
+    const toDate   = dates.length ? fmtDate(new Date(Math.max(...dates))) : '—';
+
+    return { total, inStock, oos, hidden, totalUnits, inventoryValue, fromDate, toDate };
+  }
+
+  btn.addEventListener('click', ()=>{
+    // Use current (filtered) data array
+    const rows = Array.isArray(data) ? data : [];
+    const summary = buildSummary(rows);
+    const { jsPDF } = window.jspdf;
+
+    const doc = new jsPDF({ unit:'pt', format:'a4', orientation:'landscape' });
+    const margin = { left: 40, right: 40, top: 60, bottom: 30 };
+    const pageW = doc.internal.pageSize.getWidth();
+    const rightX = pageW - margin.right;
+
+    // Header
+    doc.setFontSize(16);
+    doc.text('Books Catalog Report', margin.left, 34);
+    doc.setFontSize(10);
+    doc.text(`Generated: ${nowStamp()}`, margin.left, 50);
+    doc.text('Prepared by: Admin', margin.left, 64);
+
+    const activeStatus = document.getElementById('statusFilter')?.value || 'All';
+    const searchTerm   = document.getElementById('searchBox')?.value || '—';
+    doc.setTextColor(120);
+    doc.text(`Filters: Status = ${activeStatus}, Search = ${searchTerm}`, rightX, 50, { align:'right' });
+    doc.setTextColor(0);
+    doc.setFont(undefined, 'italic');
+    doc.text('Senesa Child Center - Admin', rightX, 64, { align:'right' });
+    doc.setFont(undefined, 'normal');
+
+    // Summary
+    doc.autoTable({
+      startY: 80,
+      theme: 'plain',
+      head: [['Summary','Value']],
+      body: [
+        ['Total Books', String(summary.total)],
+        ['In Stock', String(summary.inStock)],
+        ['Out of Stock', String(summary.oos)],
+        ['Hidden', String(summary.hidden)],
+        ['Total Units', String(summary.totalUnits)],
+        ['Inventory Value', money(summary.inventoryValue)],
+        ['Created Date Range', `${summary.fromDate} to ${summary.toDate}`]
+      ],
+      styles: { fontSize: 10, cellPadding: 5 },
+      headStyles: { fillColor: [255,107,107], textColor:[255,255,255], fontStyle:'bold' },
+      margin
+    });
+
+    // Detailed table (omit cover image; keep printable width)
+    const head = [['ID','Title','Author','Price','Stock','Status','Created']];
+    const body = rows.map(r => ([
+      r.id,
+      r.title || '—',
+      r.author || '—',
+      money(r.price),
+      (Number.isFinite(r.stock) ? String(r.stock) : '—'),
+      r.status || '—',
+      (r.created_at || r.createdAt || '—')
+    ]));
+
+    const avail = doc.internal.pageSize.getWidth() - margin.left - margin.right;
+
+    doc.autoTable({
+      head, body,
+      startY: doc.lastAutoTable.finalY + 14,
+      margin,
+      tableWidth: avail,
+      styles: { fontSize: 9, cellPadding: 3, overflow:'linebreak', valign:'top' },
+      headStyles: { fillColor: [60,60,60], textColor:[255,255,255], fontStyle:'bold' },
+      alternateRowStyles: { fillColor: [248,248,248] },
+      // widths sum = 30 + 260 + 150 + 90 + 60 + 90 + 80 = 760 (<= ~762pt)
+      columnStyles: {
+        0:{ cellWidth: 30,  halign:'center' }, // ID
+        1:{ cellWidth: 260 },                  // Title
+        2:{ cellWidth: 150 },                  // Author
+        3:{ cellWidth: 90,  halign:'right' },  // Price
+        4:{ cellWidth: 60,  halign:'center' }, // Stock
+        5:{ cellWidth: 90,  halign:'center' }, // Status
+        6:{ cellWidth: 80,  halign:'center' }  // Created
+      },
+      didParseCell: (d)=>{
+        if (d.section==='body' && d.column.index===5){
+          const v = String(d.cell.raw || '').toLowerCase();
+          if (v==='in stock'){ d.cell.styles.textColor=[34,197,94]; d.cell.styles.fontStyle='bold'; }
+          else if (v==='out of stock'){ d.cell.styles.textColor=[154,52,18]; d.cell.styles.fontStyle='bold'; }
+          else if (v==='hidden'){ d.cell.styles.textColor=[239,68,68]; d.cell.styles.fontStyle='bold'; }
+        }
+      },
+      didDrawPage: (data)=>{
+        doc.setFontSize(12);
+        doc.text('Detailed Records', margin.left, data.settings.startY - 8);
+      }
+    });
+
+    // Totals recap
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 12,
+      theme: 'plain',
+      head: [['Totals','Value']],
+      body: [
+        ['Total Units', String(summary.totalUnits)],
+        ['Inventory Value', money(summary.inventoryValue)],
+        ['In Stock', String(summary.inStock)],
+        ['Out of Stock', String(summary.oos)],
+        ['Hidden', String(summary.hidden)]
+      ],
+      styles:{ fontSize:10, cellPadding:4 },
+      headStyles:{ fillColor:[255,107,107], textColor:[255,255,255], fontStyle:'bold' },
+      margin
+    });
+
+    addFooter(doc);
+    doc.save(`books_${new Date().toISOString().slice(0,10)}.pdf`);
+  });
+})();
+
 </script>
 </body>
 </html>
